@@ -15,6 +15,11 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "../../utils/utils.hpp"
+#include <map>
+#include <cctype>
+#include "../../methods/includes/wohis.hpp"
+#include "../../methods/includes/join.hpp"
 
 class Server{
 
@@ -28,7 +33,7 @@ class Server{
 		std::vector<pollfd>					fds;
 		//User								users;
 		//Channel							channel;
-		//std::map<std::string, Method*>	method;
+		std::map<std::string, IMethod*>	method;
 
 	public:
 		Server(char* arg);
