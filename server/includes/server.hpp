@@ -33,7 +33,7 @@ class Server{
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
 		std::vector<Channel>				channels;
-		std::vector<User>					user;
+		std::vector<User>					users;
 
 		std::map<std::string, IMethod*>	method;
 
@@ -46,9 +46,10 @@ class Server{
 		void	do_send(int fd);
 		void	do_recv(pollfd _fds);
 		void	do_accept();
-		void 	create_user(std::vector<std::string> info);
+		void 	create_user(std::vector<std::string> info, int fd);
 		void	create_channel(std::string name);
 		void	create_channel(std::string name, std::string password);
+		void	print_users();
 		void	loop();
 };
 

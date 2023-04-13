@@ -67,13 +67,13 @@ void Server::do_recv(pollfd _fds)
 	printf("  %d bytes received %s\n", rc, msg.c_str());
 	std::vector<std::string> a = parse(buffer, " \r\n");
 	// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
-	for (size_t i = 0; i < a.size(); i++)
-		std::cout << ">" << a[i] << "<" << std::endl;
+	// for (size_t i = 0; i < a.size(); i++)
+	// 	std::cout << ">" << a[i] << "<" << std::endl;
 	std::map<std::string, IMethod*>::iterator it = this->method.find(a[0]);
 	if (it != this->method.end())
 		it->second->do_method(a, _fds.fd);
 	else
-		this->create_user(a);
+		this->create_user(a, _fds.fd);
 }
 
 void Server::do_send(int fd)
@@ -106,7 +106,7 @@ void Server::loop(){
 					this->do_recv(fds[i]);
 					for (size_t j = 1; j < fds.size(); j++)
 						this->do_send(fds[j].fd);
-					
+					this->print_users();
 				}
 			}
 		}
@@ -118,7 +118,14 @@ void Server::create_channel(std::string name)
 	// this->channels.push_back(Channel(name, this->new_fd));
 }
 
-void Server::create_user(std::vector<std::string> info)
+void Server::print_users()
 {
-	User usr()
+	for (size_t i = 0; i < this->users.size(); i++)
+		std::cout << "Username: " << this->users[i]._nickname << " " << "Connected fd: " << this->users[i]._fd <<  std::endl;
+}
+
+void Server::create_user(std::vector<std::string> info, int fd)
+{
+	User usr(info[4], info[6], fd);
+	this->users.push_back(usr);
 }
