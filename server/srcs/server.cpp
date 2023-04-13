@@ -99,3 +99,8 @@ void Server::loop(){
 		}
 	}
 }
+
+void Server::create_channel(std::string name)
+{
+	this->channels.push_back(Channel(name, this->new_fd));
+}

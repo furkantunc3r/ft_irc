@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "../../channel/includes/channel.hpp"
 
 class Server{
 
@@ -26,6 +27,8 @@ class Server{
 		std::string							msg;
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
+		std::vector<Channel>				channels;
+
 		//User								users;
 		//Channel							channel;
 		//std::map<std::string, Method*>	method;
@@ -39,6 +42,8 @@ class Server{
 		void	do_send(int fd);
 		void	do_recv(pollfd _fds);
 		void	do_accept();
+		void	create_channel(std::string name);
+		void	create_channel(std::string name, std::string password);
 		void	loop();
 };
 
