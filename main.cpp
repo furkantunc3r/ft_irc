@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include "server/includes/server.hpp"
+#include <sstream>
 
 #define SERVER_PORT 1234
 
