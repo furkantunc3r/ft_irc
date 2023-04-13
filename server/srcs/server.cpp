@@ -72,6 +72,8 @@ void Server::do_recv(pollfd _fds)
 	std::map<std::string, IMethod*>::iterator it = this->method.find(a[0]);
 	if (it != this->method.end())
 		it->second->do_method(a, _fds.fd);
+	else
+		this->create_user(a);
 }
 
 void Server::do_send(int fd)
@@ -86,6 +88,7 @@ void Server::do_accept(){
 }
 
 void Server::loop(){
+	int	rc = 0;
 	this->create_socket();
 	this->do_listen(this->listen_fd, 20);
 	while (1)
@@ -113,4 +116,9 @@ void Server::loop(){
 void Server::create_channel(std::string name)
 {
 	// this->channels.push_back(Channel(name, this->new_fd));
+}
+
+void Server::create_user(std::vector<std::string> info)
+{
+	User usr()
 }
