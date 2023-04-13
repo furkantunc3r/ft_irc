@@ -1,2 +1,2 @@
-#ifndef QUIT_HPP
-#define QUIT_HPP
+// #ifndef QUIT_HPP
+// #define QUIT_HPP

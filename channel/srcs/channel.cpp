@@ -1,18 +1,29 @@
 #include "../includes/channel.hpp"
 
 Channel::Channel(int fd, std::string name, std::string password) : _name(name) , _password(password) {
-	User admin(fd, 0);
-	this->add_user(admin);
+	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
+		this->_fds.push_back(fd);
 }
 
 Channel::Channel(int fd, std::string name) : _name(name) {
-	User admin(fd, 0);
-	this->add_user(admin);
+	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
+		this->_fds.push_back(fd);
 }
 
-void Channel::add_user(User user)
+void Channel::add_user(int fd)
 {
-	this->_users.push_back(user);
+	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
+		this->_fds.push_back(fd);
+	std::cout <<"channel fd size :" <<this->_fds.size() << std::endl;
+
+}
+
+const std::string Channel::get_name() const {
+	return this->_name;
+}
+
+std::vector<int>& Channel::get_fds(){
+	return this->_fds;
 }
 
 Channel::~Channel() {}

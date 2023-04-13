@@ -3,7 +3,9 @@
 Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), msg()
 {
 	this->method["WHOIS"] = new Whois();
-	this->method["JOIN"] = new Join();
+	this->method["JOIN"] = new Join(this->users, this->channels);
+	this->method["CAP"] = new Cap(this->users);
+	this->method["PRIVMSG"] = new Message(this->channels);
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
@@ -52,13 +54,13 @@ void Server::do_listen(int fd, size_t listen_count)
 		exit(EXIT_FAILURE);
 	}
 	std::cout << "Listen " << this->port << std::endl;
-	this->fds.push_back ((pollfd){listen_fd, POLLIN, 0});
+	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
 }
 
 void Server::do_recv(pollfd _fds)
 {
 	int rc;
-	
+
 	memset(buffer, 0, 4096);
 	rc = recv(_fds.fd, buffer, sizeof(buffer), 0);
 	if (rc == 0)
@@ -66,14 +68,12 @@ void Server::do_recv(pollfd _fds)
 	this->msg.assign(buffer);
 	printf("  %d bytes received %s\n", rc, msg.c_str());
 	std::vector<std::string> a = parse(buffer, " \r\n");
-	// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
-	// for (size_t i = 0; i < a.size(); i++)
-	// 	std::cout << ">" << a[i] << "<" << std::endl;
-	std::map<std::string, IMethod*>::iterator it = this->method.find(a[0]);
+	std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+	for (size_t i = 0; i < a.size(); i++)
+		std::cout << ">" <<a[i] << "<" << std::endl;
+	std::map<std::string, IMethod *>::iterator it = this->method.find(a[0]);
 	if (it != this->method.end())
-		it->second->do_method(a, _fds.fd);
-	else
-		this->create_user(a, _fds.fd);
+		it->second->execute(a, _fds.fd);
 }
 
 void Server::do_send(int fd)
@@ -82,13 +82,15 @@ void Server::do_send(int fd)
 		perror("send() failed");
 }
 
-void Server::do_accept(){
+void Server::do_accept()
+{
 	this->new_fd = accept(this->listen_fd, NULL, NULL);
 	this->fds.push_back((pollfd){new_fd, POLLIN, 0});
 }
 
-void Server::loop(){
-	int	rc = 0;
+void Server::loop()
+{
+	int rc = 0;
 	this->create_socket();
 	this->do_listen(this->listen_fd, 20);
 	while (1)
@@ -104,8 +106,8 @@ void Server::loop(){
 				else
 				{
 					this->do_recv(fds[i]);
-					for (size_t j = 1; j < fds.size(); j++)
-						this->do_send(fds[j].fd);
+					// for (size_t j = 1; j < fds.size(); j++)
+					// 	this->do_send(fds[j].fd);
 					this->print_users();
 				}
 			}
@@ -113,19 +115,14 @@ void Server::loop(){
 	}
 }
 
-void Server::create_channel(std::string name)
-{
-	// this->channels.push_back(Channel(name, this->new_fd));
-}
+// void Server::create_channel(std::string name)
+// {
+// 	// this->channels.push_back(Channel(name, this->new_fd));
+// }
 
 void Server::print_users()
 {
 	for (size_t i = 0; i < this->users.size(); i++)
-		std::cout << "Username: " << this->users[i]._nickname << " " << "Connected fd: " << this->users[i]._fd <<  std::endl;
-}
-
-void Server::create_user(std::vector<std::string> info, int fd)
-{
-	User usr(info[4], info[6], fd);
-	this->users.push_back(usr);
+		std::cout << "Username: " << this->users[i]._nickname << " "
+				  << "Connected fd: " << this->users[i]._fd << std::endl;
 }

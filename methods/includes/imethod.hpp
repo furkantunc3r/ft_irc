@@ -4,12 +4,13 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include "../../utils/utils.hpp"
 
 class IMethod
 {
 	public:
 		virtual ~IMethod(){};
-		virtual void do_method(std::vector<std::string> &arg, int _role) = 0;
+		virtual void execute(std::vector<std::string> &arg, int fd) = 0;
 };
 
 #endif

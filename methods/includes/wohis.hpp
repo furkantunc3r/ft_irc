@@ -8,7 +8,7 @@ class Whois : public IMethod{
 	public:
 		Whois();
 		~Whois();
-		void do_method(std::vector<std::string> &arg, int _role);
+		void execute(std::vector<std::string> &arg, int _role);
 };
 
 #endif

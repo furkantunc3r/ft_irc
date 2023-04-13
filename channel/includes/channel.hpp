@@ -2,21 +2,27 @@
 #define CHANNEL_HPP
 
 #include <iostream>
-#include "../../user/includes/user.hpp"
 #include <vector>
 #include <cstring>
+#include <algorithm>
+#include "../../user/includes/user.hpp"
+
+
+//send semantiği private mesaj için "PRIVMSG " + target_user + " :" + message;
 class Channel
 {
     private:
         std::string				_name;
-        std::vector<User>		_users;
+        std::vector<int>		_fds;
         std::string				_password;
     
     public:
         Channel(int fd, std::string name);
         Channel(int fd, std::string name, std::string password);
-		void add_user(User user);
-		void kick_user(User user);
+		const std::string	get_name() const;
+		void 				add_user(int fd);
+		void 				kick_user(User user);
+		std::vector<int>& 	get_fds();
         ~Channel();
 };
 

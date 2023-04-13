@@ -21,6 +21,8 @@
 #include <cctype>
 #include "../../methods/includes/wohis.hpp"
 #include "../../methods/includes/join.hpp"
+#include "../../methods/includes/cap.hpp"
+#include "../../methods/includes/message.hpp"
 
 class Server{
 
