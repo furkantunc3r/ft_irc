@@ -1,16 +1,20 @@
-APP		= ft_irc
-CC		= c++
-CFLAGS	= -std=c++98
-MFILES	= $(wildcard ./*.cpp ./user/srcs/*.cpp ./channel/srcs/*.cpp ./server/srcs/*.cpp)
+NAME	= ft_irc
+CC		= clang++
+CFLAGS	= -Wall -Wextra -Werror -std=c++98
+SRC		= $(shell find . -type f -name "*.cpp")
+OBJ		= $(SRC:.cpp=.o)
 
-all		:  run
+all : $(NAME)
 
-run		:
-	$(CC) -o $(APP) $(CFLAGS) $(MFILES)
+$(NAME) : $(OBJ)
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
-clean	:
-	@rm -rf $(APP)
+clean :
+	@rm -rf $(OBJ)
+
+fclean : clean
+	@rm -rf $(NAME)
 
 re : fclean all
 
-.PHONY: all run clean fclean re
+.PHONY : all clean re

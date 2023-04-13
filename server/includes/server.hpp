@@ -16,6 +16,11 @@
 #include <vector>
 #include <algorithm>
 #include "../../channel/includes/channel.hpp"
+#include "../../utils/utils.hpp"
+#include <map>
+#include <cctype>
+#include "../../methods/includes/wohis.hpp"
+#include "../../methods/includes/join.hpp"
 
 class Server{
 
@@ -31,7 +36,7 @@ class Server{
 
 		//User								users;
 		//Channel							channel;
-		//std::map<std::string, Method*>	method;
+		std::map<std::string, IMethod*>	method;
 
 	public:
 		Server(char* arg);
