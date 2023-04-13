@@ -9,7 +9,7 @@ class IMethod
 {
 	public:
 		virtual ~IMethod(){};
-		virtual void do_method(std::vector<std::string> arg, int _role) = 0;
+		virtual void do_method(std::vector<std::string> &arg, int _role) = 0;
 };
 
 #endif

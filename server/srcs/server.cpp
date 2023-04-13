@@ -2,8 +2,8 @@
 
 Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), msg()
 {
-	this->method["whois"] = new Whois();
-	this->method["join"] = new Join();
+	this->method["WHOIS"] = new Whois();
+	this->method["JOIN"] = new Join();
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
@@ -35,7 +35,7 @@ void Server::create_socket()
 		close(this->listen_fd);
 		exit(EXIT_FAILURE);
 	}
-	if (bind(this->listen_fd, (struct sockaddr *)&this->addr, sizeof(this->addr)))
+	if (bind(this->listen_fd, (struct sockaddr *)&addr, sizeof(addr)))
 	{
 		perror("bind() failed ");
 		close(this->listen_fd);
@@ -66,9 +66,9 @@ void Server::do_recv(pollfd _fds)
 	this->msg.assign(buffer);
 	printf("  %d bytes received %s\n", rc, msg.c_str());
 	std::vector<std::string> a = parse(buffer, " \r\n");
-	// for (size_t i = 0; i < a.size(); i++)
-	// 	std::cout << ">" << a[i] << "<" << std::endl;
-	std::transform(a[0].begin(), a[0].end(), a[0].begin(), tolower);
+	// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+	for (size_t i = 0; i < a.size(); i++)
+		std::cout << ">" << a[i] << "<" << std::endl;
 	std::map<std::string, IMethod*>::iterator it = this->method.find(a[0]);
 	if (it != this->method.end())
 		it->second->do_method(a, _fds.fd);
@@ -112,5 +112,5 @@ void Server::loop(){
 
 void Server::create_channel(std::string name)
 {
-	this->channels.push_back(Channel(name, this->new_fd));
+	// this->channels.push_back(Channel(name, this->new_fd));
 }
