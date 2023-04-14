@@ -1,14 +1,13 @@
 #include "../includes/message.hpp"
 
-Message::Message(std::map<std::string, Channel>& channel) : _channels(channel){}
+Message::Message(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels){}
 
 Message::~Message(){}
 
 void Message::execute(std::vector<std::string> &arg, int fd){
-	std::cout << "ANAN!!!!" << std::endl;
 	std::string msg;
-	std::cout << "SAAS!!!!" << std::endl;
-	msg.append(":acetin1!Abdullah1@localhost "); //dinamik yap
+	msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost ");
+	// msg.append(":acetin1!Abdullah1@localhost "); //dinamik yap
 	msg.append("PRIVMSG " + arg[2] + " :");
 	for (size_t i = 4; i < arg.size(); i++)
 		msg.append(trim(arg[i], ':'));
@@ -29,7 +28,8 @@ void Message::execute(std::vector<std::string> &arg, int fd){
 				{
 					std::cout << "fd : "<< ite->second.get_fds()[j] << std::endl;
 					std::cout << msg <<std::endl;
-					std::cout << "send :"<< send(it->second.get_fds()[j], msg.c_str(), msg.size(), 0) << std::endl;
+					if (it->second.get_fds()[j] != fd)
+						std::cout << "send :"<< send(it->second.get_fds()[j], msg.c_str(), msg.size(), 0) << std::endl;
 				}
 			}
 		}

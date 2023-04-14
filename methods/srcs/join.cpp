@@ -6,13 +6,8 @@ Join::~Join(){}
 
 void Join::execute(std::vector<std::string> &arg, int fd)
 {
-	std::cout << "GELDI!!!\n";
 	if (channel_validate(this->_channels, arg.back(), fd))
-	{
-		std::cout << "ZAAA!!\n";
 		this->_channels.insert(std::make_pair(arg.back(), Channel(fd, arg.back())));
-		std::cout << "AXAXA!!\n";
-	}
 	if (!channel_validate(this->_channels, arg.back(), fd))
 	{
 		std::cout << this->_channels.size() << std::endl;

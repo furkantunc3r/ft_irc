@@ -27,7 +27,6 @@ static std::vector<std::string> parse(std::string str, std::string delimeter)
 }
 
 static bool channel_validate(std::map<std::string, Channel> channels, std::string channel_name, int fd){
-	std::cout << "YARRAK!!!!\n";
 	if (channel_name[0] != '#')
 	{
 		std::cerr << "Channel name has to start with #" << std::endl;

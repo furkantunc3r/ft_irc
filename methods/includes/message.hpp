@@ -6,9 +6,10 @@
 
 class Message : public IMethod{
 	std::map<std::string, Channel>&	_channels;	
+	std::map<int, User>&			_users;
 	
 	public:
-		Message(std::map<std::string, Channel>& channel);
+		Message(std::map<int, User> &users, std::map<std::string, Channel> &channels);
 		~Message();
 
 		void execute(std::vector<std::string> &arg, int fd);
