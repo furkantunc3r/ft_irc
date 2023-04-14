@@ -6,9 +6,9 @@
 class Cap :public IMethod{
 
 	private:
-		std::vector<User>&	_users;
+		std::map<int, User>&	_users;
 	public:
-		Cap(std::vector<User>&	users);
+		Cap(std::map<int, User>&	users);
 		~Cap();
 		void execute(std::vector<std::string> &arg, int fd);
 };

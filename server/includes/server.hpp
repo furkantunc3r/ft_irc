@@ -34,8 +34,12 @@ class Server{
 		std::string							msg;
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
-		std::vector<Channel>				channels;
-		std::vector<User>					users;
+
+		std::map<int, User>					users;
+		std::map<std::string, Channel>		channels;
+
+		// std::vector<Channel>				channels;
+		// std::vector<User>					users;
 
 		std::map<std::string, IMethod*>	method;
 

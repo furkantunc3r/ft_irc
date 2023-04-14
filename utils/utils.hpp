@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include "../channel/includes/channel.hpp"
 #include "unistd.h"
+#include <map>
 
 static std::vector<std::string> parse(std::string str, std::string delimeter)
 {
@@ -25,20 +26,28 @@ static std::vector<std::string> parse(std::string str, std::string delimeter)
 	return ret;
 }
 
-static bool does_exist_channel(std::vector<Channel> channels, std::string channel_name, int fd){
-
+static bool channel_validate(std::map<std::string, Channel> channels, std::string channel_name, int fd){
+	std::cout << "YARRAK!!!!\n";
 	if (channel_name[0] != '#')
 	{
 		std::cerr << "Channel name has to start with #" << std::endl;
 		send(fd, "Channel name has to start with #\r\n", 34, 0);
 		return false;
 	}
-	for (size_t i = 0; i < channels.size(); i++)
+
+	std::map<std::string, Channel>::iterator it;
+	for(it = channels.begin(); it != channels.end(); it++)
 	{
-		if (!strncmp(channels[i].get_name().c_str(), channel_name.c_str(), channels[i].get_name().size()))
+		if(!strncmp(it->second.get_name().c_str(), channel_name.c_str(), it->second.get_name().size()))
 			return false;
 	}
 	return true;
+	
+	// for (size_t i = 0; i < channels.size(); i++)
+	// {
+	// 	if (!strncmp(channels[i].get_name().c_str(), channel_name.c_str(), channels[i].get_name().size()))
+	// 		return false;
+	// }
 }
 
 static inline std::string trim(std::string& str, char delimeter)

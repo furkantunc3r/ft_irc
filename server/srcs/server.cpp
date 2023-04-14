@@ -102,7 +102,12 @@ void Server::loop()
 
 void Server::print_users()
 {
-	for (size_t i = 0; i < this->users.size(); i++)
-		std::cout << "Username: " << this->users[i]._nickname << " "
-				  << "Connected fd: " << this->users[i]._fd << std::endl;
+	std::map<int, User>::iterator it = this->users.begin();
+
+	for(; it != this->users.end(); it++)
+		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << std::endl;
+
+	// for (size_t i = 0; i < this->users.size(); i++)
+	// 	std::cout << "Username: " << this->users[i]._nickname << " "
+	// 			  << "Connected fd: " << this->users[i]._fd << std::endl;
 }

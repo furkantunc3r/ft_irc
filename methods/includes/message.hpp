@@ -5,10 +5,10 @@
 #include "../../channel/includes/channel.hpp"
 
 class Message : public IMethod{
-	std::vector<Channel>&	_channel;	
+	std::map<std::string, Channel>&	_channels;	
 	
 	public:
-		Message(std::vector<Channel>& channel);
+		Message(std::map<std::string, Channel>& channel);
 		~Message();
 
 		void execute(std::vector<std::string> &arg, int fd);
