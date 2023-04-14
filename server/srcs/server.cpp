@@ -20,39 +20,19 @@ void Server::create_socket()
 	int on;
 	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->listen_fd < 0)
-	{
-		perror("socket () failed ");
-		close(this->listen_fd);
-		exit(EXIT_FAILURE);
-	}
+		error("socket () failed ", this->listen_fd);
 	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) < 0)
-	{
-		perror("setsockopt() failed ");
-		close(this->listen_fd);
-		exit(EXIT_FAILURE);
-	}
+		error("setsockopt() failed ", this->listen_fd);
 	if (fcntl(this->listen_fd, F_SETFL, O_NONBLOCK) < 0)
-	{
-		perror("fcnt() failed ");
-		close(this->listen_fd);
-		exit(EXIT_FAILURE);
-	}
+		error("fcnt() failed ", this->listen_fd);
 	if (bind(this->listen_fd, (struct sockaddr *)&addr, sizeof(addr)))
-	{
-		perror("bind() failed ");
-		close(this->listen_fd);
-		exit(EXIT_FAILURE);
-	}
+		error("bind() failed ", this->listen_fd);
 }
 
 void Server::do_listen(int fd, size_t listen_count)
 {
 	if (listen(fd, listen_count) < 0)
-	{
-		perror("listen() failed ");
-		close(this->listen_fd);
-		exit(EXIT_FAILURE);
-	}
+		error("listen() failed ", this->listen_fd);
 	std::cout << "Listen " << this->port << std::endl;
 	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
 }

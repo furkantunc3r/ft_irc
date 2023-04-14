@@ -3,6 +3,7 @@
 
 #include <sys/socket.h>
 #include "../channel/includes/channel.hpp"
+#include "unistd.h"
 
 static std::vector<std::string> parse(std::string str, std::string delimeter)
 {
@@ -45,5 +46,12 @@ static inline std::string trim(std::string& str, char delimeter)
     str.erase(str.find_last_not_of(delimeter)+1);
     str.erase(0, str.find_first_not_of(delimeter));
     return str;
+}
+
+static void error(std::string msg, int fd)
+{
+	perror(msg.c_str());
+	close(fd);
+	exit(EXIT_FAILURE);
 }
 #endif
