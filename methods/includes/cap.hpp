@@ -3,6 +3,7 @@
 
 #include "imethod.hpp"
 #include "../../user/includes/user.hpp"
+#include "../../irc_bots/includes/leaving_bot.hpp"
 class Cap :public IMethod{
 
 	private:

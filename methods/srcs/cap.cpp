@@ -1,6 +1,9 @@
 #include "../includes/cap.hpp"
 
-Cap::Cap(std::map<int, User>&	users) : _users(users){}
+Cap::Cap(std::map<int, User>&	users) : _users(users){
+	User _leavingbot("NiGhT_BoT", "irc", -1);
+	this->_users.insert(std::make_pair(-1, _leavingbot));
+}
 
 Cap::~Cap(){}
 

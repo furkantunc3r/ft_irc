@@ -38,11 +38,7 @@ class Server{
 
 		std::map<int, User>					users;
 		std::map<std::string, Channel>		channels;
-
-		// std::vector<Channel>				channels;
-		// std::vector<User>					users;
-
-		std::map<std::string, IMethod*>	method;
+		std::map<std::string, IMethod*>		method;
 
 	public:
 		Server(char* arg);
