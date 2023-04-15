@@ -8,7 +8,6 @@ class User
     private:
         int         _port;
         int         _role;
-        std::string _username;
         std::string _realname;
         std::string _hostname;
         std::string _password;
@@ -16,6 +15,7 @@ class User
     public:
         int         _fd;
         std::string _nickname;
+        std::string _username;
         User(int fd, int port);
         User(std::string nickname, std::string username, int fd);
         ~User();
