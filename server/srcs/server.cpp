@@ -6,10 +6,13 @@ Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), m
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users);
 	this->method["PRIVMSG"] = new Message(this->channels);
+
 	memset((char *)&this->addr, 0, sizeof(this->addr));
+
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_port = htons(this->port);
+
 	memset(buffer, 0, 4096);
 }
 
@@ -106,19 +109,12 @@ void Server::loop()
 				else
 				{
 					this->do_recv(fds[i]);
-					// for (size_t j = 1; j < fds.size(); j++)
-					// 	this->do_send(fds[j].fd);
 					this->print_users();
 				}
 			}
 		}
 	}
 }
-
-// void Server::create_channel(std::string name)
-// {
-// 	// this->channels.push_back(Channel(name, this->new_fd));
-// }
 
 void Server::print_users()
 {
