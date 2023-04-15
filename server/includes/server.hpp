@@ -23,6 +23,7 @@
 #include "../../methods/includes/join.hpp"
 #include "../../methods/includes/cap.hpp"
 #include "../../methods/includes/message.hpp"
+#include "../../methods/includes/quit.hpp"
 
 class Server{
 

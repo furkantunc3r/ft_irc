@@ -35,12 +35,10 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 		it = this->_channels.begin();
 		for (size_t i = 0; it != this->_channels.end(); it++, i++)
 			std::cout << it->second.get_fds()[i] << std::endl;
-
 		// for (size_t i = 0; i < this->_channel[0].get_fds().size(); i++)
 		// {
 		// 	std::cout << this->_channel[0].get_fds()[i] << std::endl;
 		// }
-		
 		std::string a(":"  + nick + "!localhost JOIN ");
 		a.append(arg.back() + "\r\n");
 		std::cout << "******************************" << std::endl;
