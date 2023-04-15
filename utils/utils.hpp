@@ -28,20 +28,18 @@ static std::vector<std::string> parse(std::string str, std::string delimeter)
 }
 
 static bool channel_validate(std::map<std::string, Channel> channels, std::string channel_name, int fd){
-	if (channel_name[0] != '#' || !channel_name[1])
+	if (channel_name[0] != '#')
 	{
 		std::cerr << "Channel name has to start with #" << std::endl;
 		send(fd, "Channel name has to start with #\r\n", 34, 0);
 		return false;
 	}
-
 	std::map<std::string, Channel>::iterator it;
 	for(it = channels.begin(); it != channels.end(); it++)
 	{
 		if(!strncmp(it->second.get_name().c_str(), channel_name.c_str(), it->second.get_name().size()))
 			return false;
 	}
-
 	return true;
 	
 	// for (size_t i = 0; i < channels.size(); i++)

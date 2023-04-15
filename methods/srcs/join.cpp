@@ -6,6 +6,11 @@ Join::~Join(){}
 
 void Join::execute(std::vector<std::string> &arg, int fd)
 {
+	if(arg[2][0] != '#' || !arg[2][1])
+	{
+		send(fd, "Channel name has to start with #\r\n", 34, 0);
+		return ;
+	}
 	if (channel_validate(this->_channels, arg.back(), fd))
 		this->_channels.insert(std::make_pair(arg.back(), Channel(fd, arg.back())));
 	if (!channel_validate(this->_channels, arg.back(), fd))
