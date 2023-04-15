@@ -12,7 +12,7 @@ void Message::execute(std::vector<std::string> &arg, int fd){
 	for (size_t i = 4; i < arg.size(); i++)
 		msg.append(trim(arg[i], ':'));
 	msg.append("\r\n");
-
+	std::cout << "message--------> " << msg << std::endl;
 	std::map<std::string, Channel>::iterator it = this->_channels.begin();
 	std::map<std::string, Channel>::iterator ite = this->_channels.begin();
 	if (!channel_validate(this->_channels, arg[2], fd))

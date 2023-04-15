@@ -5,13 +5,8 @@ Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), m
 	this->method["WHOIS"] = new Whois();
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users);
-<<<<<<< HEAD
-	this->method["PRIVMSG"] = new Message(this->channels);
-
-=======
 	this->method["PRIVMSG"] = new Message(this->users, this->channels);
-	this->method["QUIT"] = new Quit(this->users, this->fds);
->>>>>>> 84a4f5342c352e06a6acfb4ee220c28eba462bed
+	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 
 	this->addr.sin_family = AF_INET;
