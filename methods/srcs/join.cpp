@@ -1,38 +1,49 @@
 #include "../includes/join.hpp"
 
-Join::Join(std::vector<User>& users, std::vector<Channel>& channel) : _users(users), _channel(channel) {}
+Join::Join(std::map<int, User> &users, std::map<std::string, Channel> &channel) : _users(users), _channels(channel) {}
 
 Join::~Join(){}
 
 void Join::execute(std::vector<std::string> &arg, int fd)
 {
-	if (does_exist_channel(this->_channel, arg.back(), fd))
-		this->_channel.push_back(Channel(fd, arg.back()));
-	if (!does_exist_channel(this->_channel, arg.back(), fd))
+	if(arg[2][0] != '#' || !arg[2][1])
 	{
-		std::cout << this->_channel.size() << std::endl;
+		send(fd, "Channel name has to start with #\r\n", 34, 0);
+		return ;
+	}
+	if (channel_validate(this->_channels, arg.back(), fd))
+		this->_channels.insert(std::make_pair(arg.back(), Channel(fd, arg.back())));
+	if (!channel_validate(this->_channels, arg.back(), fd))
+	{
+		std::cout << this->_channels.size() << std::endl;
 		std::string nick;
 		std::cout << "user size : " << this->_users.size() << std::endl;
-		for (size_t i = 0; i < _users.size(); i++)
+		
+		std::map<std::string, Channel>::iterator it = this->_channels.begin();
+		std::map<int, User>::iterator ite = this->_users.begin();
+		for (; ite != this->_users.end(); ite++)
 		{
-			if (_users[i]._fd == fd)
+			if (ite->second._fd == fd)
 			{
-				nick = _users[i]._nickname;
-				for (size_t j = 0; j < this->_channel.size(); j++)
+				nick = ite->second._nickname;
+				for (; it != this->_channels.end(); it++)
 				{
-					if (!strncmp(this->_channel[j].get_name().c_str(), arg[2].c_str(), this->_channel[j].get_name().size()))
+					if (!strncmp(it->second.get_name().c_str(), arg[2].c_str(), it->second.get_name().size()))
 					{
 						std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
-						this->_channel[j].add_user(fd);
+						it->second.add_user(fd);
 					}
 				}
 			}
 		}
-		for (size_t i = 0; i < this->_channel[0].get_fds().size(); i++)
-		{
-			std::cout << this->_channel[0].get_fds()[i] << std::endl;
-		}
-		
+
+		it = this->_channels.begin();
+		for (size_t i = 0; it != this->_channels.end(); it++, i++)
+			std::cout << it->second.get_fds()[i] << std::endl;
+		// for (size_t i = 0; i < this->_channel[0].get_fds().size(); i++)
+		// {
+		// 	std::cout << this->_channel[0].get_fds()[i] << std::endl;
+		// }
 		std::string a(":"  + nick + "!localhost JOIN ");
 		a.append(arg.back() + "\r\n");
 		std::cout << "******************************" << std::endl;
