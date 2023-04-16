@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 
-Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), msg()
+Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1)
 {
 	this->method["WHOIS"] = new Whois();
 	this->method["JOIN"] = new Join(this->users, this->channels);
@@ -16,7 +16,11 @@ Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), m
 	memset(buffer, 0, 4096);
 }
 
-Server::~Server() {}
+Server::~Server() {
+	std::map<std::string, IMethod*>::iterator it = this->method.begin();
+	for (; it != this->method.end(); it++)
+		delete it->second;
+}
 
 void Server::create_socket()
 {
@@ -48,13 +52,12 @@ void Server::do_recv(pollfd _fds)
 	rc = recv(_fds.fd, buffer, sizeof(buffer), 0);
 	if (rc == 0)
 	{
-		printf("  Connection closed\n");
-		compress_array(this->fds);
+		std::cout << "  Connection closed" << std::endl;
+		// compress_array(this->fds);
 	}
 	if (rc > 0)
 	{
-		this->msg.assign(buffer);
-		printf("  %d bytes received %s\n", rc, msg.c_str());
+		std::cout << rc <<" bytes received " << buffer << std::endl;
 		std::vector<std::string> a = parse(buffer, " \r\n");
 		std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
 		for (size_t i = 0; i < a.size(); i++)
@@ -67,7 +70,7 @@ void Server::do_recv(pollfd _fds)
 
 void Server::do_send(int fd)
 {
-	if (send(fd, msg.c_str(), msg.length(), 0) < 0)
+	if (send(fd, buffer, strlen(buffer), 0) < 0)
 		perror("send() failed");
 }
 

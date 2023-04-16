@@ -32,7 +32,6 @@ class Server{
 		int									listen_fd;
 		int									new_fd;
 		char								buffer[4096];
-		std::string							msg;
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
 
