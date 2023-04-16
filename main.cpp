@@ -20,8 +20,8 @@
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2)
+	if (argc != 3)
 		exit(1);
-	Server server(argv[1]);
+	Server server(argv[1], argv[2]);
 	server.loop();
 }

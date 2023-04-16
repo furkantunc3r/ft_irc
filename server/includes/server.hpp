@@ -39,8 +39,10 @@ class Server{
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
 
+		std::string							_pass;
+
 	public:
-		Server(char* arg);
+		Server(char* arg, char *pass);
 		~Server();
 
 		void	create_socket();
@@ -53,6 +55,8 @@ class Server{
 		void	create_channel(std::string name, std::string password);
 		void	print_users();
 		void	loop();
+
+		std::string	get_pass();
 };
 
 #endif

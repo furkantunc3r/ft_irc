@@ -4,12 +4,17 @@
 #include "imethod.hpp"
 #include "../../user/includes/user.hpp"
 #include "../../irc_bots/includes/leaving_bot.hpp"
+#include "../../server/includes/server.hpp"
+
+class Server;
+
 class Cap :public IMethod{
 
 	private:
 		std::map<int, User>&	_users;
+		Server&					_server;
 	public:
-		Cap(std::map<int, User>&	users);
+		Cap(std::map<int, User>&	users, Server& server);
 		~Cap();
 		void execute(std::vector<std::string> &arg, int fd);
 };
