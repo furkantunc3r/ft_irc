@@ -4,7 +4,9 @@ Quit::Quit(std::map<int, User> &users, std::vector<pollfd> &fds, std::map<std::s
 	_message = new Message(_users, _channels);
 }
 
-Quit::~Quit() {}
+Quit::~Quit() {
+	delete this->_message;
+}
 
 void Quit::execute(std::vector<std::string> &arg, int fd)
 {

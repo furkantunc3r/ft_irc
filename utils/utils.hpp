@@ -41,12 +41,6 @@ static bool channel_validate(std::map<std::string, Channel> channels, std::strin
 			return false;
 	}
 	return true;
-	
-	// for (size_t i = 0; i < channels.size(); i++)
-	// {
-	// 	if (!strncmp(channels[i].get_name().c_str(), channel_name.c_str(), channels[i].get_name().size()))
-	// 		return false;
-	// }
 }
 
 static inline std::string trim(std::string& str, char delimeter)
@@ -63,20 +57,20 @@ static void error(std::string msg, int fd)
 	exit(EXIT_FAILURE);
 }
 
-static void compress_array(std::vector<pollfd> fds)
-{
-	size_t nfds = fds.size();
-	for (size_t i = 0; i < nfds; i++)
-      {
-        if (fds[i].fd == -1)
-        {
-          for(size_t j = i; j < nfds; j++)
-          {
-            fds[j].fd = fds[j+1].fd;
-          }
-          i--;
-          nfds--;
-        }
-      }
-}
+// static void compress_array(std::vector<pollfd> fds)
+// {
+// 	size_t nfds = fds.size();
+// 	for (size_t i = 0; i < nfds; i++)
+//       {
+//         if (fds[i].fd == -1)
+//         {
+//           for(size_t j = i; j < nfds; j++)
+//           {
+//             fds[j].fd = fds[j+1].fd;
+//           }
+//           i--;
+//           nfds--;
+//         }
+//       }
+// }
 #endif
