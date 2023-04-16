@@ -13,7 +13,6 @@ void Cap::execute(std::vector<std::string> &arg, int fd)
 	bool does_exist = false;
 	// trim(arg[4]);
 
-	std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!TEST\n";
 	if (arg[7] != this->_server.get_pass())
 	{
 		std::string msg;
