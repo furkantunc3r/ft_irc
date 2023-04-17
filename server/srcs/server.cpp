@@ -15,6 +15,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["CAP"] = new Cap(this->users, *this);
 	this->method["PRIVMSG"] = new Message(this->users, this->channels);
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
+	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users);
 }
 
