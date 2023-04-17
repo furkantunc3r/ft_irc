@@ -17,6 +17,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users);
+	this->method["USER"] = new Usercmd(this->users);
 }
 
 Server::~Server() {

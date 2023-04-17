@@ -26,6 +26,7 @@
 #include "../../methods/includes/quit.hpp"
 #include "../../methods/includes/pass.hpp"
 #include "../../methods/includes/nick.hpp"
+#include "../../methods/includes/usercmd.hpp"
 
 class Server{
 

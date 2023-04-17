@@ -11,7 +11,6 @@ void Nick::execute(std::vector<std::string> &args, int fd)
 
     if (args.empty() || args[2].empty())
     {
-        std::cout << "TEEEEEEEEEESTT\n";
         it = this->_users.find(fd);
         msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 431 " + it->second._nickname + " :Please provide a Nickname\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
