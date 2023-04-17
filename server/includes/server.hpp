@@ -19,7 +19,6 @@
 #include "../../utils/utils.hpp"
 #include <map>
 #include <cctype>
-#include "../../methods/includes/wohis.hpp"
 #include "../../methods/includes/join.hpp"
 #include "../../methods/includes/cap.hpp"
 #include "../../methods/includes/message.hpp"
@@ -27,6 +26,7 @@
 #include "../../methods/includes/pass.hpp"
 #include "../../methods/includes/nick.hpp"
 #include "../../methods/includes/usercmd.hpp"
+#include "../../methods/includes/privmsg.hpp"
 
 class Server{
 
