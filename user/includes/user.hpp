@@ -9,13 +9,13 @@ class User
     private:
         int         				_port;
         int         				_role;
-        std::string 				_realname;
         std::string					_password;
     
     public:
-        int         _fd;
-        std::string _nickname;
-        std::string _username;
+        int                         _fd;
+        std::string                 _nickname;
+        std::string                 _username;
+        std::string 				_realname;
         std::vector<std::string>	_channels;
 		
         User(int fd, int port);
