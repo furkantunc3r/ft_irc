@@ -9,6 +9,7 @@
 
 
 //send semantiği private mesaj için "PRIVMSG " + target_user + " :" + message;
+
 class Channel
 {
     private:

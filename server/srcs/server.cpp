@@ -1,12 +1,7 @@
 #include "../includes/server.hpp"
 
-Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1)
+Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass))
 {
-	this->method["WHOIS"] = new Whois();
-	this->method["JOIN"] = new Join(this->users, this->channels);
-	this->method["CAP"] = new Cap(this->users);
-	this->method["PRIVMSG"] = new Message(this->users, this->channels);
-	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 
 	this->addr.sin_family = AF_INET;
@@ -14,6 +9,13 @@ Server::Server(char *arg) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1)
 	this->addr.sin_port = htons(this->port);
 
 	memset(buffer, 0, 4096);
+
+	this->method["WHOIS"] = new Whois();
+	this->method["JOIN"] = new Join(this->users, this->channels);
+	this->method["CAP"] = new Cap(this->users, *this);
+	this->method["PRIVMSG"] = new Message(this->users, this->channels);
+	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
+	this->method["PASS"] = new Pass(this->users);
 }
 
 Server::~Server() {
@@ -115,4 +117,9 @@ void Server::print_users()
 	// for (size_t i = 0; i < this->users.size(); i++)
 	// 	std::cout << "Username: " << this->users[i]._nickname << " "
 	// 			  << "Connected fd: " << this->users[i]._fd << std::endl;
+}
+
+std::string Server::get_pass()
+{
+	return this->_pass;
 }
