@@ -6,9 +6,10 @@
 class Pass : public IMethod
 {
     private:
-        std::map<int, User>& _users;
+        std::map<int, User>&    _users;
+        std::string             _pass;
     public:
-        Pass(std::map<int, User>& users);
+        Pass(std::map<int, User>& users, std::string pass);
         ~Pass();
         void execute(std::vector<std::string> &args, int fd);
 

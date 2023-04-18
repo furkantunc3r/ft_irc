@@ -15,7 +15,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["PRIVMSG"] = new Message(this->users, this->channels);
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	this->method["NICK"] = new Nick(this->users);
-	this->method["PASS"] = new Pass(this->users);
+	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
 }
@@ -63,12 +63,33 @@ void Server::do_recv(pollfd _fds)
 	{
 		std::cout << rc <<" bytes received " << buffer << std::endl;
 		std::vector<std::string> a = parse(buffer, " \r\n");
+		std::vector<std::string> b;
+
 		std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
 		for (size_t i = 0; i < a.size(); i++)
 			std::cout << ">" <<a[i] << "<" << std::endl;
-		std::map<std::string, IMethod *>::iterator it = this->method.find(a[0]);
-		if (it != this->method.end())
-			it->second->execute(a, _fds.fd);
+
+		for (size_t i = 0; i < a.size(); i++)
+		{
+			std::map<std::string, IMethod *>::iterator it = this->method.find(a[i]);
+			if (it != this->method.end())
+			{
+				std::map<std::string, IMethod *>::iterator ite;
+				int j = i + 1;
+				b.insert(b.end(), a[i]);
+				for (; j < a.size(); j++)
+				{
+					ite = this->method.find(a[j]);
+					if (ite == this->method.end())
+						b.insert(b.end(), a[j]);
+					else
+						break ;
+					
+				}
+				it->second->execute(b, _fds.fd);
+				b.clear();
+			}
+		}
 	}
 }
 

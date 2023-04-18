@@ -1,11 +1,26 @@
 #include "../includes/pass.hpp"
 
-Pass::Pass(std::map<int, User>& users) : _users(users) {}
+Pass::Pass(std::map<int, User>& users, std::string pass) : _users(users), _pass(pass) {}
 
 Pass::~Pass() {}
 
 void Pass::execute(std::vector<std::string> &args, int fd)
 {
+	std::cout << "---->PASS TEST<----\n";
+	for (size_t i = 0; i < args.size(); i++)
+		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
+	
+
+	if (args[2] != this->_pass)
+	{
+		std::string msg;
+		msg.append("Password wrong or Nickname already in use\r\n");
+		send(fd, msg.c_str(), msg.size(), 0);
+		close(fd);
+		this->_users.erase(this->_users.find(fd));
+		return ;
+	}
+	
 	std::map<int, User>::iterator it = this->_users.find(fd);
 	if (args[2].empty())
 	{
