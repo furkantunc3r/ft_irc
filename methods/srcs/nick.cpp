@@ -13,9 +13,7 @@ void Nick::execute(std::vector<std::string> &args, int fd)
     std::map<int, User>::iterator it;
     std::string msg;
 
-    char buff[10];
-
-    if (read(fd, buff, sizeof(buff)) != -1)
+    if (this->_users.find(fd)->second._joinable != -1)
     {
         if (args.empty() || args[2].empty())
         {
@@ -35,10 +33,9 @@ void Nick::execute(std::vector<std::string> &args, int fd)
                 return;
             }
         }
+
         it = this->_users.find(fd);
-        msg.append(":" + it->second._nickname + "!" + it->second._username + "@" + "localhost"
-                                                                                   " NICK " +
-                   args[2] + "\r\n");
+        msg.append(":" + it->second._nickname + "!" + it->second._username + "@" + "localhost" + " NICK " + args[2] + "\r\n");
         send(fd, msg.c_str(), msg.size(), 0);
         it = this->_users.find(fd);
         it->second._nickname = args[2];

@@ -65,9 +65,9 @@ void Server::do_recv(pollfd _fds)
 		std::vector<std::string> a = parse(buffer, " \r\n");
 		std::vector<std::string> b;
 
-		std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
-		for (size_t i = 0; i < a.size(); i++)
-			std::cout << ">" <<a[i] << "<" << std::endl;
+		// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+		// for (size_t i = 0; i < a.size(); i++)
+		// 	std::cout << ">" <<a[i] << "<" << std::endl;
 
 		for (size_t i = 0; i < a.size(); i++)
 		{
@@ -90,6 +90,8 @@ void Server::do_recv(pollfd _fds)
 				b.clear();
 			}
 		}
+		if (this->users.find(_fds.fd)->second._joinable == -1)
+			this->users.erase(_fds.fd);
 	}
 }
 

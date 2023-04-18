@@ -13,9 +13,7 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
   std::map<int, User>::iterator it = this->_users.find(fd);
   std::string msg;
 
-  char buff[10];
-
-  if (read(fd, buff, sizeof(buff)) != -1)
+  if (this->_users.find(fd)->second._joinable != -1)
   {
     if (args.size() < 4)
     {
@@ -25,14 +23,15 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
       return;
     }
 
-    if (it != this->_users.end())
+    if (it->second._is_regis == 1)
     {
-      msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 462 " + it->second._nickname + " :You are already registered\r\n");
+      msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 462 " + it->second._nickname + " :You are already registered2\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }
 
     it->second._username = args[2];
     it->second._realname = args[8];
+    it->second._is_regis = 1;
   }
 }
