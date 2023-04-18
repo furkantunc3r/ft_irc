@@ -8,8 +8,6 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_port = htons(this->port);
 
-	memset(buffer, 0, 4096);
-
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users, *this);
 	this->method["PRIVMSG"] = new Message(this->users, this->channels);
@@ -51,31 +49,29 @@ void Server::do_listen(int fd, size_t listen_count)
 void Server::do_recv(pollfd _fds)
 {
 	int rc;
+	char	buffer[256];
 
-	memset(buffer, 0, 4096);
-	rc = recv(_fds.fd, buffer, sizeof(buffer), 0);
-	if (rc == 0)
+	while (!std::strstr(buffer, "\r\n"))
 	{
-		std::cout << "  Connection closed" << std::endl;
-		// compress_array(this->fds);
+		memset(buffer, 0, 256);
+		rc = recv(_fds.fd, buffer, 256, 0);
+		message.append(buffer);
+		if (rc == -1)
+			break;
 	}
-	if (rc > 0)
-	{
-		std::cout << rc <<" bytes received " << buffer << std::endl;
-		std::vector<std::string> a = parse(buffer, " \r\n");
-		std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
-		for (size_t i = 0; i < a.size(); i++)
-			std::cout << ">" <<a[i] << "<" << std::endl;
-		std::map<std::string, IMethod *>::iterator it = this->method.find(a[0]);
-		if (it != this->method.end())
-			it->second->execute(a, _fds.fd);
-	}
-}
-
-void Server::do_send(int fd)
-{
-	if (send(fd, buffer, strlen(buffer), 0) < 0)
-		perror("send() failed");
+	memset(buffer, 0, 256);
+	std::cout << "$?->" << message << std::endl;
+	std::cout << "size :=   " << message.size() << std::endl;
+	if (!message.compare(0, 3, "CAP") && message.size() <= 12)
+		return;
+	std::vector<std::string> a = parse(message, " \r\n");
+	for (size_t i = 0; i < a.size(); i++)
+		std::cout << a[i] << std::endl;
+	std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+	std::map<std::string, IMethod *>::iterator it = this->method.find(a[0]);
+	if (it != this->method.end())
+		it->second->execute(a, _fds.fd);
+	message.clear();
 }
 
 void Server::do_accept()

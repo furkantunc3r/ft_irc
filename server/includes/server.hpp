@@ -34,13 +34,13 @@ class Server{
 		int									port;
 		int									listen_fd;
 		int									new_fd;
-		char								buffer[4096];
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
+		std::string	message;
 
 		std::string							_pass;
 
