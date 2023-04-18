@@ -6,7 +6,7 @@ Pass::~Pass() {}
 
 void Pass::execute(std::vector<std::string> &args, int fd)
 {
-	std::cout << "---->PASS TEST<----\n";
+	std::cout << ">PASS TEST<\n";
 	for (size_t i = 0; i < args.size(); i++)
 		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
 	

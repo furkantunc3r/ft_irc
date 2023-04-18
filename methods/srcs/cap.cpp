@@ -10,7 +10,7 @@ Cap::~Cap(){}
 
 void Cap::execute(std::vector<std::string> &arg, int fd)
 {
-	std::cout << "---->CAP TEST<----\n";
+	std::cout << ">CAP TEST<\n";
 	
 	// bool does_exist = false;
 

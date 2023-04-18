@@ -6,7 +6,7 @@ Usercmd::~Usercmd() {}
 
 void Usercmd::execute(std::vector<std::string> &args, int fd)
 {
-  std::cout << "---->USER TEST<----\n";
+  std::cout << ">USER TEST<\n";
   for (size_t i = 0; i < args.size(); i++)
     std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
 

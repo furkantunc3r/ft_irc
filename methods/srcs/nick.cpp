@@ -6,7 +6,7 @@ Nick::~Nick() {}
 
 void Nick::execute(std::vector<std::string> &args, int fd)
 {
-    std::cout << "---->NICK TEST<----\n";
+    std::cout << ">NICK TEST<\n";
     for (size_t i = 0; i < args.size(); i++)
         std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
 

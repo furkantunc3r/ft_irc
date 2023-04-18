@@ -6,6 +6,10 @@ Privmsg::~Privmsg() {}
 
 void Privmsg::execute(std::vector<std::string> &args, int fd)
 {
+    std::cout << ">Privmsg TEST<\n";
+	for (size_t i = 0; i < args.size(); i++)
+		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
+
     std::map<int, User>::iterator it;
     std::string msg;
     std::string tts;
@@ -34,8 +38,11 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         std::vector<int> fds(ite->second.get_fds());
         for (size_t i = 0; i < fds.size(); i++)
         {
-            msg.append(":" + this->_users.find(fds[i])->second._nickname + "!" + this->_users.find(fds[i])->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
-            send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
+            if (fds[i] != fd)
+            {
+                msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
+                send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
+            }
         }
         msg.clear();
         return ;
