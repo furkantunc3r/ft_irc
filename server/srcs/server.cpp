@@ -137,7 +137,7 @@ void Server::print_users()
 	std::map<int, User>::iterator it = this->users.begin();
 
 	for(; it != this->users.end(); it++)
-		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << std::endl;
+		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << std::endl;
 
 	// for (size_t i = 0; i < this->users.size(); i++)
 	// 	std::cout << "Username: " << this->users[i]._nickname << " "

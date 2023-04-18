@@ -36,6 +36,6 @@ void Cap::execute(std::vector<std::string> &arg, int fd)
 	// 		does_exist = true;
 	// }
 	
-	User usr("Nickname", "Username", fd);
+	User usr("", "", fd);
 	this->_users.insert(std::make_pair(fd, usr));
 }
