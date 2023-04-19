@@ -27,6 +27,7 @@
 #include "../../methods/includes/nick.hpp"
 #include "../../methods/includes/usercmd.hpp"
 #include "../../methods/includes/privmsg.hpp"
+#include "../../methods/includes/oper.hpp"
 
 class Server{
 
@@ -39,10 +40,12 @@ class Server{
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
+		std::map<int, User>					_opers;
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
 
 		std::string							_pass;
+		std::string							_oper_pass;
 
 	public:
 		Server(char* arg, char *pass);

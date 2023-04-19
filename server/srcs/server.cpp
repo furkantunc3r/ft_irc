@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 
-Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass))
+Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass)), _oper_pass(std::string("1071"))
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 
@@ -18,6 +18,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
+	this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
 Server::~Server() {
@@ -137,7 +138,7 @@ void Server::print_users()
 	std::map<int, User>::iterator it = this->users.begin();
 
 	for(; it != this->users.end(); it++)
-		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << std::endl;
+		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << " Role: " << it->second._role << std::endl;
 
 	// for (size_t i = 0; i < this->users.size(); i++)
 	// 	std::cout << "Username: " << this->users[i]._nickname << " "
