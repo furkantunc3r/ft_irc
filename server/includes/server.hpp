@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <errno.h>
 #include <cstring>
 #include <unistd.h>
@@ -19,12 +20,15 @@
 #include "../../utils/utils.hpp"
 #include <map>
 #include <cctype>
-#include "../../methods/includes/wohis.hpp"
 #include "../../methods/includes/join.hpp"
 #include "../../methods/includes/cap.hpp"
 #include "../../methods/includes/message.hpp"
 #include "../../methods/includes/quit.hpp"
 #include "../../methods/includes/pass.hpp"
+#include "../../methods/includes/nick.hpp"
+#include "../../methods/includes/usercmd.hpp"
+#include "../../methods/includes/privmsg.hpp"
+#include "../../methods/includes/oper.hpp"
 
 class Server{
 
@@ -37,10 +41,12 @@ class Server{
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
+		std::map<int, User>					_opers;
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
 
 		std::string							_pass;
+		std::string							_oper_pass;
 
 	public:
 		Server(char* arg, char *pass);
@@ -50,6 +56,7 @@ class Server{
 		void	do_listen(int fd, size_t listen_count);
 		void	do_recv(pollfd _fds);
 		void	do_accept();
+		void	execute(std::string, int fd);
 		void	print_users();
 		void	loop();
 
