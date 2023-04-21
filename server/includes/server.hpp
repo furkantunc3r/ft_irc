@@ -32,7 +32,7 @@ class Server{
 		int									port;
 		int									listen_fd;
 		int									new_fd;
-		char								buffer[4096];
+		std::string							msg;
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
 
@@ -48,12 +48,8 @@ class Server{
 
 		void	create_socket();
 		void	do_listen(int fd, size_t listen_count);
-		void	do_send(int fd);
 		void	do_recv(pollfd _fds);
 		void	do_accept();
-		void 	create_user(std::vector<std::string> info, int fd);
-		void	create_channel(std::string name);
-		void	create_channel(std::string name, std::string password);
 		void	print_users();
 		void	loop();
 

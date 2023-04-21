@@ -1,42 +1,41 @@
 #include "../includes/cap.hpp"
 
-Cap::Cap(std::map<int, User>&	users, Server& server) : _users(users), _server(server)
+Cap::Cap(std::map<int, User> &users, Server &server) : _users(users), _server(server)
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
 	this->_users.insert(std::make_pair(-1, _leavingbot));
 }
 
-Cap::~Cap(){}
+Cap::~Cap() {}
 
 void Cap::execute(std::vector<std::string> &arg, int fd)
 {
 	bool does_exist = false;
-	// trim(arg[4]);
 
-	if (arg[7] != this->_server.get_pass())
+	if (strncmp(_server.get_pass().c_str(), arg[4].c_str(), _server.get_pass().size()))
 	{
 		std::string msg;
-		msg.append(":" + arg[10] + "!" + arg[13] + "localhost" + " 464 " + arg[10] + " :Password incorrect\r\n");
+		msg.append(":" + arg[6] + "!" + arg[8] + "localhost" + " 464 " + arg[6] + " :Password incorrect\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
 		close(fd);
-		return ;
+		return;
 	}
+	std::cout << arg.size() << std::endl;
 	std::map<int, User>::iterator it = this->_users.begin();
-	for (; it != this->_users.end(); it++)
+	// if (arg.size() > 5)
 	{
-		if (!strncmp(it->second._nickname.c_str(), arg[10].c_str(), it->second._nickname.size()))
-			does_exist = true;
+		std::cout << "aaaaaaaaaaaaaaaaaaaaaaaa\n";
+		for (; it != this->_users.end(); it++)
+		{
+			if (!strncmp(it->second._nickname.c_str(), arg[6].c_str(), it->second._nickname.size()))
+				does_exist = true;
+		}
+		if (!does_exist)
+		{
+			User usr(arg[6], arg[8], fd);
+			this->_users.insert(std::make_pair(fd, usr));
+		}
 	}
-
-	// for (size_t i = 0; i < this->_users.size(); i++)
-	// {
-	// 	if (!strncmp(this->_users[i]._nickname.c_str(), arg[7].c_str(), this->_users[i]._nickname.size()))
-	// 		does_exist = true;
-	// }
-	
-	if (!does_exist)
-	{
-		User usr(arg[10], arg[13], fd);
-		this->_users.insert(std::make_pair(fd, usr));
-	}	
+	if (arg.size() < 5)
+		close(fd);
 }

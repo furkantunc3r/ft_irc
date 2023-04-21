@@ -6,7 +6,7 @@ Join::~Join(){}
 
 void Join::execute(std::vector<std::string> &arg, int fd)
 {
-	if(arg[2][0] != '#' || !arg[2][1])
+	if(arg[1][0] != '#' || arg[1].size() < 2)
 	{
 		send(fd, "Channel name has to start with #\r\n", 34, 0);
 		return ;
@@ -17,7 +17,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 	{
 		std::cout << this->_channels.size() << std::endl;
 		std::string nick;
-		std::map<std::string, Channel>::iterator channel_it = this->_channels.find(arg[2]);
+		std::map<std::string, Channel>::iterator channel_it = this->_channels.find(arg[1]);
 		std::map<int, User>::iterator user_it = this->_users.find(fd);
 		if (user_it != this->_users.end())
 		{

@@ -7,7 +7,7 @@ Pass::~Pass() {}
 void Pass::execute(std::vector<std::string> &args, int fd)
 {
 	std::map<int, User>::iterator it = this->_users.find(fd);
-	if (args[2].empty())
+	if (args[1].empty())
 	{
 		std::string msg;
 		msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");

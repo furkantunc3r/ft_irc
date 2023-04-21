@@ -10,7 +10,7 @@ Quit::~Quit() {
 
 void Quit::execute(std::vector<std::string> &arg, int fd)
 {
-    if (arg[2].size() > 160)
+    if (arg[1].size() > 160)
     {
         send(fd, "Quit message cannot exceed 160 characters\r\n", 43, 0);
         return ;
@@ -19,11 +19,10 @@ void Quit::execute(std::vector<std::string> &arg, int fd)
     std::vector<pollfd>::iterator it = this->_fds.begin();
     for(; it->fd != fd; it++) {}
     // buffer.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@" + "localhost" + " QUIT " + arg[2]);
-    send(fd, buffer.c_str(), buffer.size(), 0);
+    // send(fd, buffer.c_str(), buffer.size(), 0);
 	std::string reason;
-	trim(arg[2], ':');
-	for (size_t i = 2; i < arg.size(); i++)
-		reason.append(arg[i]);
+	// trim(arg[2], ':');
+	reason.append(arg.back());
 	reason.append("\r\n");
 	this->send_message(fd, reason);
     this->_fds.erase(it);
