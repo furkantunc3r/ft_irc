@@ -6,24 +6,29 @@
 #include <cstring>
 #include <algorithm>
 #include "../../user/includes/user.hpp"
-
-
-//send semantiği private mesaj için "PRIVMSG " + target_user + " :" + message;
+#include <map>
 
 class Channel
 {
     private:
+        int                     _admin_fd;
         std::string				_name;
+
         std::vector<int>		_fds;
+
+        std::map<int, User>&    _users;
         std::string				_password;
     
     public:
-        Channel(int fd, std::string name);
-        Channel(int fd, std::string name, std::string password);
+        Channel(int fd, std::string name, std::map<int, User>& users);
+        Channel(int fd, std::string name, std::string password, std::map<int, User>& users);
+        void                make_admin(int fd);
 		const std::string	get_name() const;
 		void 				add_user(int fd);
 		void 				kick_user(User user);
 		std::vector<int>& 	get_fds();
+        bool                is_on_channel(int fd);
+        int                 get_admin_fd();
         ~Channel();
 };
 

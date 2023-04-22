@@ -1,4 +1,4 @@
-NAME	= ft_irc
+NAME	= ircserver
 CC		= c++
 CFLAGS	= -Wall -Wextra -Werror -std=c++98
 SRC		= $(shell find . -type f -name "*.cpp")

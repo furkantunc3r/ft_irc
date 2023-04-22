@@ -28,6 +28,7 @@
 #include "../../methods/includes/usercmd.hpp"
 #include "../../methods/includes/privmsg.hpp"
 #include "../../methods/includes/oper.hpp"
+#include "../../methods/includes/kick.hpp"
 
 class Server{
 
@@ -40,12 +41,10 @@ class Server{
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
-		std::map<int, User>					_opers;
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
 
 		std::string							_pass;
-		std::string							_oper_pass;
 
 	public:
 		Server(char* arg, char *pass);
@@ -61,6 +60,12 @@ class Server{
 		void	create_channel(std::string name, std::string password);
 		void	print_users();
 		void	loop();
+
+		int		get_user_fd_if_on_server(std::string name);
+		User&	get_user(int fd);
+
+		Channel&	get_channel(std::string name);
+		bool		search_channel(std::string name);
 
 		std::string	get_pass();
 };

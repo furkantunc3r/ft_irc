@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 
-Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass)), _oper_pass(std::string("1071"))
+Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass))
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 
@@ -18,7 +18,8 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
-	this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
+	this->method["KICK"] = new Kick(*this);
+	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
 Server::~Server() {
@@ -47,6 +48,35 @@ void Server::do_listen(int fd, size_t listen_count)
 		error("listen() failed ", this->listen_fd);
 	std::cout << "Listen " << this->port << std::endl;
 	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
+}
+
+int Server::get_user_fd_if_on_server(std::string name)
+{
+	std::map<int, User>::iterator it = this->users.begin();
+
+	for (; it != this->users.end(); it++)
+	{
+		if (it->second._nickname == name)
+			return it->second._fd;
+	}
+	return 0;
+}
+
+User& Server::get_user(int fd)
+{
+	return this->users.find(fd)->second;
+}
+
+Channel& Server::get_channel(std::string name)
+{
+	return this->channels.find(name)->second;
+}
+
+bool Server::search_channel(std::string name)
+{
+	if (this->channels.find(name) != this->channels.end())
+		return 1;
+	return 0;
 }
 
 void Server::do_recv(pollfd _fds)
@@ -138,7 +168,7 @@ void Server::print_users()
 	std::map<int, User>::iterator it = this->users.begin();
 
 	for(; it != this->users.end(); it++)
-		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << " Role: " << it->second._role << std::endl;
+		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << std::endl;
 
 	// for (size_t i = 0; i < this->users.size(); i++)
 	// 	std::cout << "Username: " << this->users[i]._nickname << " "
