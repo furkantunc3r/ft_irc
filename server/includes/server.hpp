@@ -27,6 +27,8 @@
 #include "../../methods/includes/nick.hpp"
 #include "../../methods/includes/usercmd.hpp"
 #include "../../methods/includes/privmsg.hpp"
+#include "../../methods/includes/oper.hpp"
+#include "../../methods/includes/kick.hpp"
 
 class Server{
 
@@ -58,6 +60,12 @@ class Server{
 		void	create_channel(std::string name, std::string password);
 		void	print_users();
 		void	loop();
+
+		int		get_user_fd_if_on_server(std::string name);
+		User&	get_user(int fd);
+
+		Channel&	get_channel(std::string name);
+		bool		search_channel(std::string name);
 
 		std::string	get_pass();
 };

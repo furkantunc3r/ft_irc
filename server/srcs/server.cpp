@@ -12,12 +12,14 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users, *this);
-	this->method["PRIVMSG"] = new Message(this->users, this->channels);
+	// this->method["PRIVMSG"] = new Message(this->users, this->channels);
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	this->method["NICK"] = new Nick(this->users);
-	this->method["PASS"] = new Pass(this->users);
+	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
+	this->method["KICK"] = new Kick(*this);
+	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
 Server::~Server() {
@@ -48,6 +50,35 @@ void Server::do_listen(int fd, size_t listen_count)
 	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
 }
 
+int Server::get_user_fd_if_on_server(std::string name)
+{
+	std::map<int, User>::iterator it = this->users.begin();
+
+	for (; it != this->users.end(); it++)
+	{
+		if (it->second._nickname == name)
+			return it->second._fd;
+	}
+	return 0;
+}
+
+User& Server::get_user(int fd)
+{
+	return this->users.find(fd)->second;
+}
+
+Channel& Server::get_channel(std::string name)
+{
+	return this->channels.find(name)->second;
+}
+
+bool Server::search_channel(std::string name)
+{
+	if (this->channels.find(name) != this->channels.end())
+		return 1;
+	return 0;
+}
+
 void Server::do_recv(pollfd _fds)
 {
 	int rc;
@@ -63,12 +94,35 @@ void Server::do_recv(pollfd _fds)
 	{
 		std::cout << rc <<" bytes received " << buffer << std::endl;
 		std::vector<std::string> a = parse(buffer, " \r\n");
-		std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+		std::vector<std::string> b;
+
+		// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
+		// for (size_t i = 0; i < a.size(); i++)
+		// 	std::cout << ">" <<a[i] << "<" << std::endl;
+
 		for (size_t i = 0; i < a.size(); i++)
-			std::cout << ">" <<a[i] << "<" << std::endl;
-		std::map<std::string, IMethod *>::iterator it = this->method.find(a[0]);
-		if (it != this->method.end())
-			it->second->execute(a, _fds.fd);
+		{
+			std::map<std::string, IMethod *>::iterator it = this->method.find(a[i]);
+			if (it != this->method.end())
+			{
+				std::map<std::string, IMethod *>::iterator ite;
+				int j = i + 1;
+				b.insert(b.end(), a[i]);
+				for (; j < a.size(); j++)
+				{
+					ite = this->method.find(a[j]);
+					if (ite == this->method.end())
+						b.insert(b.end(), a[j]);
+					else
+						break ;
+					
+				}
+				it->second->execute(b, _fds.fd);
+				b.clear();
+			}
+		}
+		if (this->users.find(_fds.fd)->second._joinable == -1)
+			this->users.erase(_fds.fd);
 	}
 }
 
@@ -114,7 +168,7 @@ void Server::print_users()
 	std::map<int, User>::iterator it = this->users.begin();
 
 	for(; it != this->users.end(); it++)
-		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << std::endl;
+		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << std::endl;
 
 	// for (size_t i = 0; i < this->users.size(); i++)
 	// 	std::cout << "Username: " << this->users[i]._nickname << " "
