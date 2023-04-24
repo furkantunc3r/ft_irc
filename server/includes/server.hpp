@@ -30,6 +30,7 @@
 #include "../../methods/includes/privmsg.hpp"
 #include "../../methods/includes/oper.hpp"
 #include "../../methods/includes/kick.hpp"
+#include "../../methods/includes/ping.hpp"
 
 class Server{
 

@@ -17,6 +17,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["USER"] = new Usercmd(this->users);
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
 	this->method["KICK"] = new Kick(*this);
+	this->method["PING"] = new Ping(*this);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
