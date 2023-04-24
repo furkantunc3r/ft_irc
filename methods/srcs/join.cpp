@@ -26,23 +26,20 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 	
 	if (!channel_validate(this->_channels, arg.back(), fd))
 	{
-		std::cout << this->_channels.size() << std::endl;
-		std::string nick;
-		std::string username;
+		// std::cout << this->_channels.size() << std::endl;
 		std::map<std::string, Channel>::iterator channel_it = this->_channels.find(arg[1]);
 		std::map<int, User>::iterator user_it = this->_users.find(fd);
 		if (user_it != this->_users.end())
-		{
-			nick = user_it->second._nickname;
-			username = user_it->second._username;
+		{;
 			if (channel_it != this->_channels.end())
 			{
 				channel_it->second.add_user(fd);
 				user_it->second._channels.push_back(channel_it->second.get_name());
 			}
+			std::string a(user_it->second._prefix + "JOIN ");
+			a.append(arg.back() + "\r\n");
+			// std::cout <<"a "<< a << std::endl;
+			send(fd, a.c_str(), a.length(), 0);
 		}
-		std::string a(":" + nick + "!localhost JOIN ");
-		a.append(arg.back() + "\r\n");
-		send(fd, a.c_str(), a.length(), 0);
 	}
 }

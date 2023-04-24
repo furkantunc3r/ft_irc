@@ -31,6 +31,7 @@
 #include "../../methods/includes/oper.hpp"
 #include "../../methods/includes/kick.hpp"
 #include "../../methods/includes/ping.hpp"
+#include "../../methods/includes/part.hpp"
 
 class Server{
 
@@ -67,6 +68,8 @@ class Server{
 		bool		search_channel(std::string name);
 
 		std::string	get_pass();
+		void	erase_user(int fd);
+		void	erase_channel(std::string channel);
 };
 
 #endif

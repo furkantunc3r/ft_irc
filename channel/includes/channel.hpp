@@ -29,6 +29,7 @@ class Channel
 		std::vector<int>& 	get_fds();
         bool                is_on_channel(int fd);
         int                 get_admin_fd();
+		void				erase_user(int fd);
         ~Channel();
 };
 

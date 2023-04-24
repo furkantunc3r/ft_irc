@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 {
 	if (argc != 3)
 	{
-		std::cerr << "./ft_irc <port> <pass>" << std::endl;
+		std::cerr << "./ircserver <port> <pass>" << std::endl;
 		exit(1);
 	}
 	Server server(argv[1], argv[2]);

@@ -10,7 +10,6 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users, *this);
-	// this->method["PRIVMSG"] = new Message(this->users, this->channels);
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users, this->_pass);
@@ -18,6 +17,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
+	this->method["PART"] = new Part(this->channels);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
@@ -143,6 +143,20 @@ void Server::loop()
 			}
 		}
 	}
+}
+
+void Server::erase_user(int fd)
+{
+	std::map<int, User>::iterator it = this->users.find(fd);
+	if (it != this->users.end())
+		this->users.erase(it);
+}
+
+void Server::erase_channel(std::string channel)
+{
+	std::map<std::string, Channel>::iterator it = this->channels.find(channel);
+	if (it != this->channels.end())
+		this->channels.erase(it);
 }
 
 void Server::print_users()

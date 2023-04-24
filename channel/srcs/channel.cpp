@@ -18,8 +18,6 @@ void Channel::add_user(int fd)
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
-	std::cout <<"channel fd size :" <<this->_fds.size() << std::endl;
-
 }
 
 void Channel::make_admin(int fd)
@@ -34,6 +32,14 @@ void Channel::make_admin(int fd)
 	msg.append(":" + it->second._nickname + "!" + it->second._username + "@localhost" + " NOTICE " + it->second._nickname + " :You are now the channel operator\r\n");
 	this->_admin_fd = it->second._fd;
 	send(it->second._fd, msg.c_str(), msg.size(), 0);
+}
+
+void Channel::erase_user(int fd)
+{
+	std::vector<int>::iterator fd_it = std::find(_fds.begin(), _fds.end(), fd);
+	if (fd_it != _fds.end())
+		_fds.erase(fd_it);
+	// std::cout << _users.size() << std::endl;
 }
 
 int Channel::get_admin_fd()

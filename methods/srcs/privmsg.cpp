@@ -30,7 +30,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             it = this->_users.find(fd);
             msg.clear();
-            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
+            msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;   
         }
@@ -39,7 +39,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             if (fds[i] != fd)
             {
-                msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+                msg.append(it->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
                 send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
             }
         }
@@ -48,7 +48,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     }
     else 
     {
-        msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+        msg.append(it->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
         for (it = this->_users.begin(); it != this->_users.end(); it++)
         {
             if (!strncmp(it->second._nickname.c_str(), args[1].c_str(), it->second._nickname.size()))
@@ -62,7 +62,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             it = this->_users.find(fd);
             msg.clear();
-            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[1] + " :No such nick or channel\r\n");
+            msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[1] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;
         }

@@ -11,20 +11,20 @@ void Oper::execute(std::vector<std::string> &args, int fd)
 
     if (args.size() != 5 || args[2].empty() || args[4].empty())
     {
-        msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+        msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
         send(fd, msg.c_str(), msg.size(), 0);
         return;
     }
 
     if (args[4] != this->_pass)
 	{
-		msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 464 " + it->second._nickname + " :Wrong Oper Pass\r\n");
+		msg.append(it->second._prefix + " 464 " + it->second._nickname + " :Wrong Oper Pass\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}
 
     this->_opers.insert(std::make_pair(it->first, it->second));
-    msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 381 " + it->second._nickname + " :You are now an IRC operator\r\n");
+    msg.append(it->second._prefix + " 381 " + it->second._nickname + " :You are now an IRC operator\r\n");
     send(fd, msg.c_str(), msg.size(), 0);
     return ;
 }
