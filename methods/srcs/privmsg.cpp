@@ -50,11 +50,12 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     }
     else 
     {
-        msg.append(it->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
         for (it = this->_users.begin(); it != this->_users.end(); it++)
         {
             if (!strncmp(it->second._nickname.c_str(), args[1].c_str(), it->second._nickname.size()))
             {
+				msg.append(this->_users.find(fd)->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+				std::cout << msg << std::endl;
                 send(it->second._fd, msg.c_str(), msg.size(), 0);
                 return;
             }
