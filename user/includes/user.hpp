@@ -9,7 +9,6 @@ class User
     private:
         int         				_port;
         std::string					_password;
-		// std::string					_
     
     public:
         int                         _fd;
@@ -19,6 +18,7 @@ class User
         std::vector<std::string>	_channels;
         int                         _joinable;
         int                         _is_regis;
+		std::string					_prefix;
 		
         User(int fd, int port);
         User(std::string nickname, std::string username, int fd);
