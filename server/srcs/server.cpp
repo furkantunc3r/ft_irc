@@ -8,8 +8,6 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_port = htons(this->port);
 
-	memset(buffer, 0, 4096);
-
 	this->method["JOIN"] = new Join(this->users, this->channels);
 	this->method["CAP"] = new Cap(this->users, *this);
 	// this->method["PRIVMSG"] = new Message(this->users, this->channels);
@@ -22,19 +20,21 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
-Server::~Server() {
-	std::map<std::string, IMethod*>::iterator it = this->method.begin();
+Server::~Server()
+{
+	std::map<std::string, IMethod *>::iterator it = this->method.begin();
 	for (; it != this->method.end(); it++)
 		delete it->second;
 }
 
 void Server::create_socket()
 {
-	int on;
+	int optval = 1;
+
 	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->listen_fd < 0)
 		error("socket () failed ", this->listen_fd);
-	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) < 0)
+	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 		error("setsockopt() failed ", this->listen_fd);
 	if (fcntl(this->listen_fd, F_SETFL, O_NONBLOCK) < 0)
 		error("fcnt() failed ", this->listen_fd);
@@ -50,6 +50,17 @@ void Server::do_listen(int fd, size_t listen_count)
 	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
 }
 
+
+void Server::execute(std::string arg, int fd)
+{
+	std::vector<std::string> cmd = parse(arg, ":");
+	std::vector<std::string> cmd2 = parse(cmd[0], " \r\t\n");
+	if (cmd.size() > 1)
+		cmd2.push_back(cmd[1]);
+	std::map<std::string, IMethod *>::iterator it = this->method.find(cmd2[0]);
+	if (it != this->method.end())
+		it->second->execute(cmd2, fd);
+}
 int Server::get_user_fd_if_on_server(std::string name)
 {
 	std::map<int, User>::iterator it = this->users.begin();
@@ -81,55 +92,25 @@ bool Server::search_channel(std::string name)
 
 void Server::do_recv(pollfd _fds)
 {
-	int rc;
-
-	memset(buffer, 0, 4096);
-	rc = recv(_fds.fd, buffer, sizeof(buffer), 0);
-	if (rc == 0)
+	int rc = 1;
+	char *buffer = new char[100];
+	memset(buffer, 0, 100);
+	rc = recv(_fds.fd, buffer, 100, 0);
+	std::cout <<"auuuuuuu " <<buffer << std::endl;
+	std::vector<std::string> temp = parse(buffer, "\r\n");
+	for (size_t i = 0; i < temp.size(); i++)
+		this->execute(temp[i], _fds.fd);
+	// std::cout << rc << std::endl;
+	if (rc <= 0)
 	{
+		// perror("recv ()");
 		std::cout << "  Connection closed" << std::endl;
-		// compress_array(this->fds);
+		std::vector<pollfd>::iterator it = this->fds.begin();
+		for (; it->fd != _fds.fd; it++){}
+		this->fds.erase(it);
+		close(_fds.fd);
 	}
-	if (rc > 0)
-	{
-		std::cout << rc <<" bytes received " << buffer << std::endl;
-		std::vector<std::string> a = parse(buffer, " \r\n");
-		std::vector<std::string> b;
-
-		// std::transform(a[0].begin(), a[0].end(), a[0].begin(), toupper);
-		// for (size_t i = 0; i < a.size(); i++)
-		// 	std::cout << ">" <<a[i] << "<" << std::endl;
-
-		for (size_t i = 0; i < a.size(); i++)
-		{
-			std::map<std::string, IMethod *>::iterator it = this->method.find(a[i]);
-			if (it != this->method.end())
-			{
-				std::map<std::string, IMethod *>::iterator ite;
-				int j = i + 1;
-				b.insert(b.end(), a[i]);
-				for (; j < a.size(); j++)
-				{
-					ite = this->method.find(a[j]);
-					if (ite == this->method.end())
-						b.insert(b.end(), a[j]);
-					else
-						break ;
-					
-				}
-				it->second->execute(b, _fds.fd);
-				b.clear();
-			}
-		}
-		if (this->users.find(_fds.fd)->second._joinable == -1)
-			this->users.erase(_fds.fd);
-	}
-}
-
-void Server::do_send(int fd)
-{
-	if (send(fd, buffer, strlen(buffer), 0) < 0)
-		perror("send() failed");
+	delete[] buffer;
 }
 
 void Server::do_accept()
@@ -142,7 +123,7 @@ void Server::loop()
 {
 	int rc = 0;
 	this->create_socket();
-	this->do_listen(this->listen_fd, 20);
+	this->do_listen(this->listen_fd, 1024);
 	while (1)
 	{
 		if (poll(fds.begin().base(), fds.size(), -1) < 0)

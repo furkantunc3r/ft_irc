@@ -12,7 +12,7 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	
 	
 	std::map<int, User>::iterator it = this->_users.find(fd);
-	if (args[2].empty())
+	if (args[1].empty())
 	{
 		std::string msg;
 		msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
@@ -28,7 +28,7 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 		return ;
 	}
 
-	if (args[2] != this->_pass)
+	if (args[1].compare(this->_pass))
 	{
 		std::string msg;
 		msg.append("Password wrong\r\n");
@@ -37,4 +37,5 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 		this->_users.find(fd)->second._joinable = -1;
 		return ;
 	}
+	std::cout << "pass bitti\n";
 }

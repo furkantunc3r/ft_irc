@@ -9,6 +9,7 @@ class User
     private:
         int         				_port;
         std::string					_password;
+		// std::string					_
     
     public:
         int                         _fd;

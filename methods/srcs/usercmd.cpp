@@ -30,8 +30,8 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
       return;
     }
 
-    it->second._username = args[2];
-    it->second._realname = args[8];
+    it->second._username = args[1];
+    it->second._realname = args[4];
     it->second._is_regis = 1;
   }
 }

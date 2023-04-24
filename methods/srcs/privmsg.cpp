@@ -21,12 +21,11 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         return;
     }
 
-    for (size_t i = 4; i < args.size(); i++)
-            tts.append(args[i]);
+    tts.append(trim(args[2], ':'));
 
-    if (args[2].at(0) == '#')
+    if (args[1][0] == '#')
     {
-        std::map<std::string, Channel>::iterator ite = this->_channels.find(args[2]);
+        std::map<std::string, Channel>::iterator ite = this->_channels.find(args[1]);
         if (ite == this->_channels.end())
         {
             it = this->_users.find(fd);
@@ -40,7 +39,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             if (fds[i] != fd)
             {
-                msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
+                msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[1] + " " + tts + "\r\n");
                 send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
             }
         }
@@ -49,10 +48,10 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     }
     else 
     {
-        msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
+        msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[1] + " " + tts + "\r\n");
         for (it = this->_users.begin(); it != this->_users.end(); it++)
         {
-            if (it->second._nickname == args[2])
+            if (!strncmp(it->second._nickname.c_str(), args[1].c_str(), it->second._nickname.size()))
             {
                 send(it->second._fd, msg.c_str(), msg.size(), 0);
                 return;
@@ -63,7 +62,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             it = this->_users.find(fd);
             msg.clear();
-            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
+            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[1] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;
         }

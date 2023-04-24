@@ -1,12 +1,12 @@
 #include "../includes/cap.hpp"
 
-Cap::Cap(std::map<int, User>&	users, Server& server) : _users(users), _server(server)
+Cap::Cap(std::map<int, User> &users, Server &server) : _users(users), _server(server)
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
 	this->_users.insert(std::make_pair(-1, _leavingbot));
 }
 
-Cap::~Cap(){}
+Cap::~Cap() {}
 
 void Cap::execute(std::vector<std::string> &arg, int fd)
 {

@@ -15,7 +15,7 @@ void Nick::execute(std::vector<std::string> &args, int fd)
 
     if (this->_users.find(fd)->second._joinable != -1)
     {
-        if (args.empty() || args[2].empty())
+        if (args.empty() || args[1].empty())
         {
             it = this->_users.find(fd);
             msg.append(":" + it->second._nickname + "!" + it->second._username + "@localhost" + " 431 " + it->second._nickname + " :Please provide a Nickname\r\n");
@@ -27,20 +27,20 @@ void Nick::execute(std::vector<std::string> &args, int fd)
         it = this->_users.begin();
         for (; it != this->_users.end(); it++)
         {
-            if (it->second._nickname == args[2])
+            if (it->second._nickname == args[1])
             {
                 msg.append(":" + it->second._nickname + "!" + it->second._username + "@localhost" + " 433 " + it->second._nickname + " :Nickname already in use\r\n");
                 send(fd, msg.c_str(), msg.size(), 0);
                 if (this->_users.find(fd)->second._nickname.empty())
-                    this->_users.find(fd)->second._nickname = args[2];
+                    this->_users.find(fd)->second._nickname = args[1];
                 return;
             }
         }
 
 
         it = this->_users.find(fd);
-        msg.append(":" + it->second._nickname + "!" + it->second._username + "@" + "localhost" " NICK " + args[2] + "\r\n");
+        msg.append(":" + it->second._nickname + "!" + it->second._username + "@" + "localhost" " NICK " + args[1] + "\r\n");
         send(fd, msg.c_str(), msg.size(), 0);
-        it->second._nickname = args[2];
+        it->second._nickname = args[1];
     }
 }
