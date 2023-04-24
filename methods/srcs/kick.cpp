@@ -36,9 +36,10 @@ void Kick::execute(std::vector<std::string> &args, int fd)
     }
 
 
-    msg.append(this->_server.get_user(fd)._prefix + "KICK " + args[1] + " " + args[2]);
+    msg.append(this->_server.get_user(fd)._prefix + "KICK " + args[1] + " " + args[2] + "\r\n");
     // std::cout << this->_server.get_user_fd_if_on_server(args[2]) << std::endl;
-    send(fd, msg.c_str(), msg.size(), 0);
+	std::cout << msg << std::endl;
+    send(this->_server.get_user_fd_if_on_server(args[2]), msg.c_str(), msg.size(), 0);
     return ;
 
 

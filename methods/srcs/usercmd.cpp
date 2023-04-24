@@ -13,7 +13,7 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
   std::map<int, User>::iterator it = this->_users.find(fd);
   std::string msg;
 
-  if (this->_users.find(fd)->second._joinable != -1)
+  if (it != this->_users.end() && this->_users.find(fd)->second._joinable != -1)
   {
     if (args.size() < 4)
     {
@@ -34,5 +34,6 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
     it->second._realname = args[4];
     it->second._is_regis = 1;
 	it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
+	std::cout <<"------------------------ " <<it->second._prefix << std::endl;
   }
 }

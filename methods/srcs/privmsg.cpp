@@ -26,9 +26,9 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     if (args[1][0] == '#')
     {
         std::map<std::string, Channel>::iterator ite = this->_channels.find(args[1]);
+        it = this->_users.find(fd);
         if (ite == this->_channels.end())
         {
-            it = this->_users.find(fd);
             msg.clear();
             msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
@@ -40,8 +40,10 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
             if (fds[i] != fd)
             {
                 msg.append(it->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+				
                 send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
             }
+			std::cout << it->second._prefix << std::endl;
         }
         msg.clear();
         return ;

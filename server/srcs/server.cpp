@@ -68,7 +68,7 @@ int Server::get_user_fd_if_on_server(std::string name)
 
 	for (; it != this->users.end(); it++)
 	{
-		if (it->second._nickname == name)
+		if (!strncmp(it->second._nickname.c_str(), name.c_str(), it->second._nickname.size()))
 			return it->second._fd;
 	}
 	return 0;
