@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <errno.h>
 #include <cstring>
 #include <unistd.h>
@@ -21,12 +22,13 @@
 #include <cctype>
 #include "../../methods/includes/join.hpp"
 #include "../../methods/includes/cap.hpp"
-#include "../../methods/includes/message.hpp"
+// #include "../../methods/includes/message.hpp"
 #include "../../methods/includes/quit.hpp"
 #include "../../methods/includes/pass.hpp"
 #include "../../methods/includes/nick.hpp"
 #include "../../methods/includes/usercmd.hpp"
 #include "../../methods/includes/privmsg.hpp"
+#include "../../methods/includes/oper.hpp"
 
 class Server{
 
@@ -34,15 +36,17 @@ class Server{
 		int									port;
 		int									listen_fd;
 		int									new_fd;
-		char								buffer[4096];
+		std::string							msg;
 		struct sockaddr_in					addr;
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
+		std::map<int, User>					_opers;
 		std::map<std::string, Channel>		channels;
 		std::map<std::string, IMethod*>		method;
 
 		std::string							_pass;
+		std::string							_oper_pass;
 
 	public:
 		Server(char* arg, char *pass);
@@ -50,12 +54,9 @@ class Server{
 
 		void	create_socket();
 		void	do_listen(int fd, size_t listen_count);
-		void	do_send(int fd);
 		void	do_recv(pollfd _fds);
 		void	do_accept();
-		void 	create_user(std::vector<std::string> info, int fd);
-		void	create_channel(std::string name);
-		void	create_channel(std::string name, std::string password);
+		void	execute(std::string, int fd);
 		void	print_users();
 		void	loop();
 
