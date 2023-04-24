@@ -23,7 +23,6 @@ void Oper::execute(std::vector<std::string> &args, int fd)
 		return ;
 	}
 
-    it->second._role = 1;
     this->_opers.insert(std::make_pair(it->first, it->second));
     msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 381 " + it->second._nickname + " :You are now an IRC operator\r\n");
     send(fd, msg.c_str(), msg.size(), 0);

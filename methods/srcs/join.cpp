@@ -15,8 +15,15 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 		send(fd, "Channel name has to start with #\r\n", 34, 0);
 		return;
 	}
+
 	if (channel_validate(this->_channels, arg.back(), fd))
-		this->_channels.insert(std::make_pair(arg.back(), Channel(fd, arg.back())));
+	{
+		Channel cha(fd, arg.back(), this->_users);
+		
+		cha.make_admin(fd);
+		this->_channels.insert(std::make_pair(arg.back(), cha));
+	}
+	
 	if (!channel_validate(this->_channels, arg.back(), fd))
 	{
 		std::cout << this->_channels.size() << std::endl;
@@ -34,7 +41,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 				user_it->second._channels.push_back(channel_it->second.get_name());
 			}
 		}
-		std::string a(":" + nick + "!" + username + "@localhost JOIN ");
+		std::string a(":" + nick + "!localhost JOIN ");
 		a.append(arg.back() + "\r\n");
 		send(fd, a.c_str(), a.length(), 0);
 	}
