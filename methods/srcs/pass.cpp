@@ -15,7 +15,7 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	if (args[1].empty())
 	{
 		std::string msg;
-		msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+		msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}
@@ -23,7 +23,7 @@ void Pass::execute(std::vector<std::string> &args, int fd)
     if (this->_users.find(fd)->second._is_regis == 1)
 	{
 		std::string msg;
-		msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 462 " + it->second._nickname + " :You are already registered1\r\n");
+		msg.append(it->second._prefix + " 462 " + it->second._nickname + " :You are already registered1\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}

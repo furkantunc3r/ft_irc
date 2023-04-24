@@ -7,6 +7,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "../../irc_bots/includes/leaving_bot.hpp"
+#include "./part.hpp"
 class Quit : public IMethod, LeavingBot
 {
     std::vector<pollfd>             	&_fds;

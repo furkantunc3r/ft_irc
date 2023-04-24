@@ -18,20 +18,21 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
     if (args.size() < 4)
     {
       it = this->_users.find(fd);
-      msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+      msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }
 
     if (it->second._is_regis == 1)
     {
-      msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 462 " + it->second._nickname + " :You are already registered2\r\n");
+      msg.append(it->second._prefix + " 462 " + it->second._nickname + " :You are already registered2\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }
-
+	it->second._fd = fd;
     it->second._username = args[1];
     it->second._realname = args[4];
     it->second._is_regis = 1;
+	it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
   }
 }

@@ -13,8 +13,8 @@ void LeavingBot::send_message(int fd, std::string reason){
 		{
 			std::string msg;
 			msg.append("PRIVMSG " + user_it->second._channels[i] + ":"
-				+ user_it->second._nickname + " has disconnected from the server =>" + reason +"\r\n");
-			std::cout << msg << std::endl;
+				+ user_it->second._nickname + " has disconnected =>" + reason +"\r\n");
+			// std::cout <<"bot :" <<msg << std::endl;
 			std::vector<std::string> first = parse(msg, ":");
 			std::vector<std::string> second = parse(first[0], " \r\n");
 			second.push_back(first[1]);
