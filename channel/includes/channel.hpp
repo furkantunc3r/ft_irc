@@ -31,6 +31,7 @@ class Channel
         int                 get_admin_fd();
 		void				erase_user(int fd);
         std::string         get_pass();
+        void                set_pass(std::string pass);
         ~Channel();
 };
 

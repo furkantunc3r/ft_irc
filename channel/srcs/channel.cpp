@@ -77,4 +77,9 @@ std::string Channel::get_pass()
 	return this->_password;
 }
 
+void Channel::set_pass(std::string pass)
+{
+	this->_password = pass;
+}
+
 Channel::~Channel() {}

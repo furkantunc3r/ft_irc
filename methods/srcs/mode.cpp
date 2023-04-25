@@ -37,5 +37,10 @@ void Mode::execute(std::vector<std::string> &args, int fd)
 		return ;
     }
 
+    if (args[2][0] == '+' && args[2][1] == 'k')
+    {
+        this->_server.get_channel(args[1]).set_pass(args[3]);
+    }
+
     return ;
 }
