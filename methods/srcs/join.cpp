@@ -26,6 +26,16 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 	
 	if (!channel_validate(this->_channels, arg.back(), fd))
 	{
+		if (!(this->_channels.find(arg[1])->second.get_pass().empty()))
+		{
+			if (arg.size() != 3 || arg[3] != this->_channels.find(arg[1])->second.get_pass())
+			{
+				std::string msg;
+				msg.append(this->_users.find(fd)->second._prefix + "457 " + this->_users.find(fd)->second._nickname + " :Incorrect channel password\r\n");
+				send(fd, msg.c_str(), msg.size(), 0);
+				return ;
+			}
+		}
 		// std::cout << this->_channels.size() << std::endl;
 		std::map<std::string, Channel>::iterator channel_it = this->_channels.find(arg[1]);
 		std::map<int, User>::iterator user_it = this->_users.find(fd);

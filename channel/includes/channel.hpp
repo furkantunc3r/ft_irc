@@ -21,7 +21,7 @@ class Channel
     
     public:
         Channel(int fd, std::string name, std::map<int, User>& users);
-        Channel(int fd, std::string name, std::string password, std::map<int, User>& users);
+        // Channel(int fd, std::string name, std::string password, std::map<int, User>& users);
         void                make_admin(int fd);
 		const std::string	get_name() const;
 		void 				add_user(int fd);
@@ -30,6 +30,7 @@ class Channel
         bool                is_on_channel(int fd);
         int                 get_admin_fd();
 		void				erase_user(int fd);
+        std::string         get_pass();
         ~Channel();
 };
 
