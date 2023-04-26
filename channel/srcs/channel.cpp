@@ -8,7 +8,7 @@
 // 		this->_fds.push_back(fd);
 // }
 
-Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password("")
+Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password(""), _limit(11)
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
@@ -80,6 +80,26 @@ std::string Channel::get_pass()
 void Channel::set_pass(std::string pass)
 {
 	this->_password = pass;
+}
+
+int	Channel::get_limit()
+{
+	return this->_limit;
+}
+
+void Channel::set_limit(int limit)
+{
+	this->_limit = limit;
+}
+
+void Channel::set_narrowcast(int val)
+{
+	this->_narrowcast = val;
+}
+
+int Channel::get_narrowcast()
+{
+	return this->_narrowcast;
 }
 
 Channel::~Channel() {}

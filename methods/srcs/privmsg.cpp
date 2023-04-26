@@ -34,6 +34,13 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;   
         }
+        if (ite->second.get_narrowcast() == 1)
+        {
+
+            msg.append(this->_users.find(fd)->second._prefix + "404 " + this->_users.find(fd)->second._prefix + " :Channel in narrowcast mode\r\n");
+            send(it->second._fd, msg.c_str(), msg.size(), 0);
+            return ;
+        }
         std::vector<int> fds(ite->second.get_fds());
         for (size_t i = 0; i < fds.size(); i++)
         {
