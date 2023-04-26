@@ -4,7 +4,6 @@ std::vector<std::string> parse(std::string str, std::string delimeter)
 {
 	std::vector<std::string>	ret;
 	std::string					buffer;
-
 	for (size_t i = 0; i < str.size(); i++)
 	{
 		buffer = str.substr(i, str.find_first_of(delimeter, i) - i);
@@ -44,8 +43,7 @@ std::string trim(std::string& str, char delimeter)
 
 void error(std::string msg, int fd)
 {
-	std::cout << msg << std::endl;
-	// perror(msg.c_str());
+	perror(msg.c_str());
 	close(fd);
 	exit(EXIT_FAILURE);
 }

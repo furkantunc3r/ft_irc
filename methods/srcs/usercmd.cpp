@@ -1,8 +1,4 @@
 #include "../includes/usercmd.hpp"
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 Usercmd::Usercmd(std::map<int, User> &users) : _users(users) {}
 
 Usercmd::~Usercmd() {}
@@ -37,5 +33,6 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
     it->second._realname = args[4];
     it->second._is_regis = 1;
     it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
+    // std::cout << "------------------------ " << it->second._prefix << std::endl;
   }
 }

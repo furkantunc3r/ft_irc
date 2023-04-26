@@ -1,8 +1,6 @@
 #include "../includes/part.hpp"
 
-Part::Part(std::map<std::string, Channel>& channels) : _channels(channels){
-
-}
+Part::Part(std::map<std::string, Channel>& channels) : _channels(channels){}
 
 Part::~Part(){}
 

@@ -2,7 +2,6 @@
 #define SERVER_HPP
 
 #include <stdio.h>
-# include <csignal>
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/poll.h>
@@ -10,7 +9,6 @@
 #include <sys/time.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <arpa/inet.h>
 #include <errno.h>
 #include <cstring>
 #include <unistd.h>
@@ -33,6 +31,7 @@
 #include "../../methods/includes/kick.hpp"
 #include "../../methods/includes/ping.hpp"
 #include "../../methods/includes/part.hpp"
+#include "../../methods/includes/mode.hpp"
 
 class Server{
 

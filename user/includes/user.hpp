@@ -9,7 +9,6 @@
 class User
 {
     public:
-        std::string	         		_ip;
         std::string					_password;
         int                         _fd;
         std::string                 _nickname;
@@ -21,7 +20,7 @@ class User
 		std::string					_prefix;
 		
         User(int fd, std::string ip);
-        User(std::string nickname, std::string username, int fd, std::string ip);
+        User(std::string nickname, std::string username, int fd);
         ~User();
 };
 

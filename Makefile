@@ -7,7 +7,8 @@ OBJ		= $(SRC:.cpp=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	@$(CC) -g -O0 $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
 clean :
 	@rm -rf $(OBJ)
 

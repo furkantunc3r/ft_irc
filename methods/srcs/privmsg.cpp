@@ -1,6 +1,6 @@
 #include "../includes/privmsg.hpp"
 
-Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), _dcc(_users) {}
+Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), _dcc() {}
 
 Privmsg::~Privmsg() {}
 
@@ -19,8 +19,10 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         send(fd, msg.c_str(), msg.size(), 0);
         return;
     }
-	std::cout << "size------------> " << args.size() << std::endl;
-	tts.append(trim(args[2], ':'));
+
+	for (size_t i = 2; i < args.size(); i++)
+		tts.append(trim(args[i], ':'));
+	
     if (args[1][0] == '#')
     {
         std::map<std::string, Channel>::iterator ite = this->_channels.find(args[1]);
@@ -31,6 +33,13 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
             msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;   
+        }
+        if (ite->second.get_narrowcast() == 1)
+        {
+
+            msg.append(this->_users.find(fd)->second._prefix + "404 " + this->_users.find(fd)->second._prefix + " :Channel in narrowcast mode\r\n");
+            send(it->second._fd, msg.c_str(), msg.size(), 0);
+            return ;
         }
         std::vector<int> fds(ite->second.get_fds());
         for (size_t i = 0; i < fds.size(); i++)
@@ -56,6 +65,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
 				msg.append(this->_users.find(fd)->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
 				std::cout << msg << std::endl;
                 send(it->second._fd, msg.c_str(), msg.size(), 0);
+                return;
             }
         }
 
@@ -64,7 +74,6 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
             it = this->_users.find(fd);
             msg.clear();
             msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[1] + " :No such nick or channel\r\n");
-			std::cout << msg << std::endl;
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;
         }

@@ -1,5 +1,5 @@
 #include "server/includes/server.hpp"
-
+#include <signal.h>
 volatile sig_atomic_t signal_received = 1;
 void handler(int signal)
 {

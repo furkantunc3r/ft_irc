@@ -8,7 +8,7 @@
 // 		this->_fds.push_back(fd);
 // }
 
-Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password("")
+Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password(""), _limit(11)
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
@@ -22,19 +22,16 @@ void Channel::add_user(int fd)
 
 void Channel::make_admin(int fd)
 {
-	std::map<int, User>::iterator it = this->_users.find(fd);
+	std::map<int, User>::iterator it = this->_users.begin();
 
-	if (it != this->_users.end())
-	{
-		std::string msg;
-		msg.append(it->second._prefix + " NOTICE " + this->_name + " :You are now the channel operator\r\n");
-		this->_admin_fd = it->second._fd;
-		send(it->second._fd, msg.c_str(), msg.size(), 0);
-	}
-}
-
-void Channel::set_admin_fd(int fd){
-	this->_admin_fd = fd;
+	for (; it != this->_users.end(); it++)
+		if (it->second._fd == fd)
+			break ;
+	
+	std::string msg;
+	msg.append(":" + it->second._nickname + "!" + it->second._username + "@localhost" + " NOTICE " + it->second._nickname + " :You are now the channel operator\r\n");
+	this->_admin_fd = it->second._fd;
+	send(it->second._fd, msg.c_str(), msg.size(), 0);
 }
 
 void Channel::erase_user(int fd)
@@ -42,11 +39,17 @@ void Channel::erase_user(int fd)
 	std::vector<int>::iterator fd_it = std::find(_fds.begin(), _fds.end(), fd);
 	if (fd_it != _fds.end())
 		_fds.erase(fd_it);
+	// std::cout << _users.size() << std::endl;
 }
 
 int Channel::get_admin_fd()
 {
 	return this->_admin_fd;
+}
+
+void Channel::set_admin_fd(int fd)
+{
+	this->_admin_fd = fd;
 }
 
 const std::string Channel::get_name() const
@@ -82,6 +85,26 @@ std::string Channel::get_pass()
 void Channel::set_pass(std::string pass)
 {
 	this->_password = pass;
+}
+
+int	Channel::get_limit()
+{
+	return this->_limit;
+}
+
+void Channel::set_limit(int limit)
+{
+	this->_limit = limit;
+}
+
+void Channel::set_narrowcast(int val)
+{
+	this->_narrowcast = val;
+}
+
+int Channel::get_narrowcast()
+{
+	return this->_narrowcast;
 }
 
 Channel::~Channel() {}

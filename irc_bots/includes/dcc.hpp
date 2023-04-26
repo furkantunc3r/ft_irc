@@ -27,30 +27,13 @@
 
 class Dcc {
 	private:
-		// std::string					ip;
-		// int							port;
-		int							waiting;
 		int							listen_fd;
-		// int							new_fd;
 		struct sockaddr_in			addr;
-		// std::vector<pollfd>			fds;
-		std::multimap<std::string, int>	files;
-		// std::map<int, User>&		users;
-	public:
-		Dcc(std::map<int, User>& _users);
-		~Dcc();
 
-		void	create_socket();
-		void	do_listen(int fd, size_t listen_count);
-		void	dcc_send(const std::vector<std::string> &args);
-		void	dcc_accept(const std::vector<std::string> &args);
-		void	dcc_reject(const std::vector<std::string> &args);
-		// void	dcc_checksum(const std::vector<std::string> &args);ma
-		void	set_addr(std::string ip, std::string port);
+	public:
+		Dcc();
+		~Dcc();
 		void	execute(const std::vector<std::string>& args);
-		// void	do_recv(pollfd _fds);
-		// void	do_accept();
-		// void	loop();
 };
 
 #endif
