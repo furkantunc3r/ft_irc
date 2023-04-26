@@ -29,11 +29,11 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }
-	it->second._fd = fd;
+    it->second._fd = fd;
     it->second._username = args[1];
     it->second._realname = args[4];
     it->second._is_regis = 1;
-	it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
-	std::cout <<"------------------------ " <<it->second._prefix << std::endl;
+    it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
+    std::cout << "------------------------ " << it->second._prefix << std::endl;
   }
 }

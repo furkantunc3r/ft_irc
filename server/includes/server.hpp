@@ -32,6 +32,7 @@
 #include "../../methods/includes/kick.hpp"
 #include "../../methods/includes/ping.hpp"
 #include "../../methods/includes/part.hpp"
+#include "../../methods/includes/mode.hpp"
 
 class Server{
 

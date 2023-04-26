@@ -2,13 +2,13 @@
 #include <sys/socket.h>
 #include <map>
 
-Channel::Channel(int fd, std::string name, std::string password, std::map<int, User>& users) : _name(name) , _password(password), _users(users)
-{
-	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
-		this->_fds.push_back(fd);
-}
+// Channel::Channel(int fd, std::string name, std::string password, std::map<int, User>& users) : _name(name) , _password(password), _users(users)
+// {
+// 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
+// 		this->_fds.push_back(fd);
+// }
 
-Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users)
+Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password("")
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
@@ -70,6 +70,16 @@ bool Channel::is_on_channel(int fd)
 		if (*it == fd)
 			return 1;
 	return 0;
+}
+
+std::string Channel::get_pass()
+{
+	return this->_password;
+}
+
+void Channel::set_pass(std::string pass)
+{
+	this->_password = pass;
 }
 
 Channel::~Channel() {}

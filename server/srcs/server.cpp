@@ -18,6 +18,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
+	this->method["MODE"] = new Mode(*this);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 }
 
@@ -35,7 +36,7 @@ void Server::create_socket()
 	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->listen_fd < 0)
 		error("socket () failed ", this->listen_fd);
-	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0 || setsockopt(this->listen_fd, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) < 0)
 		error("setsockopt() failed ", this->listen_fd);
 	if (fcntl(this->listen_fd, F_SETFL, O_NONBLOCK) < 0)
 		error("fcnt() failed ", this->listen_fd);
@@ -97,7 +98,6 @@ void Server::do_recv(pollfd _fds)
 	char *buffer = new char[100];
 	memset(buffer, 0, 100);
 	rc = recv(_fds.fd, buffer, 100, 0);
-	std::cout <<"auuuuuuu " <<buffer << std::endl;
 	std::vector<std::string> temp = parse(buffer, "\r\n");
 	for (size_t i = 0; i < temp.size(); i++)
 		this->execute(temp[i], _fds.fd);
