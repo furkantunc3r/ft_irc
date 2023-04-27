@@ -20,7 +20,8 @@ std::vector<std::string> parse(std::string str, std::string delimeter)
 	return ret;
 }
 
-bool channel_validate(std::map<std::string, Channel> channels, std::string channel_name, int fd){
+bool channel_validate(std::map<std::string, Channel> channels, std::string channel_name, int fd)
+{
 	if (channel_name[0] != '#')
 	{
 		std::cerr << "Channel name has to start with #" << std::endl;
