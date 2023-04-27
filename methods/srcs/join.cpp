@@ -23,6 +23,14 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 		cha.make_admin(fd);
 		this->_channels.insert(std::make_pair(arg[1], cha));
 	}
+
+	if (this->_channels.find(arg[1])->second.get_limit() < this->_channels.find(arg[1])->second.get_fds().size() + 1)
+	{
+		std::string msg;
+		msg.append(this->_users.find(fd)->second._prefix + "471 " + this->_channels.find(arg[1])->second.get_name() + " :Channel is already full\r\n");
+		send(fd, msg.c_str(), msg.size(), 0);
+		return ;
+	}
 	
 	if (!channel_validate(this->_channels, arg[1], fd))
 	{
@@ -31,7 +39,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 			if (arg.size() != 3 || this->_channels.find(arg[1])->second.get_pass() != arg[2])
 			{
 				std::string msg;
-				msg.append(this->_users.find(fd)->second._prefix + "457 " + this->_users.find(fd)->second._nickname + " :Incorrect channel password\r\n");
+				msg.append(this->_users.find(fd)->second._prefix + "475 " + this->_users.find(fd)->second._nickname + " :Incorrect channel password\r\n");
 				send(fd, msg.c_str(), msg.size(), 0);
 				return ;
 			}

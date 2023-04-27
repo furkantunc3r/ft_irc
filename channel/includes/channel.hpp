@@ -18,6 +18,8 @@ class Channel
 
         std::map<int, User>&    _users;
         std::string				_password;
+        int                     _limit;
+        int                     _narrowcast;
     
     public:
         Channel(int fd, std::string name, std::map<int, User>& users);
@@ -32,6 +34,10 @@ class Channel
 		void				erase_user(int fd);
         std::string         get_pass();
         void                set_pass(std::string pass);
+        int                 get_limit();
+        void                set_limit(int limit);
+        int                 get_narrowcast();
+        void                set_narrowcast(int val);
         ~Channel();
 };
 

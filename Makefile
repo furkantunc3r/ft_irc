@@ -7,6 +7,7 @@ OBJ_DIR		= obj/
 OBJ			= $(patsubst %, $(OBJ_DIR)%, $(notdir $(SRC:%.cpp=%.o)))
 INC			= $(shell find $(INC_DIRS) -name '*.hpp')
 
+
 all : $(NAME)
 
 $(NAME) : $(OBJ_DIR) $(OBJ)

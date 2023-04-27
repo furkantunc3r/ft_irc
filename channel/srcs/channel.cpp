@@ -23,7 +23,7 @@ void Channel::add_user(int fd)
 void Channel::make_admin(int fd)
 {
 	std::map<int, User>::iterator it = this->_users.begin();
-
+  
 	for (; it != this->_users.end(); it++)
 		if (it->second._fd == fd)
 			break ;
@@ -80,6 +80,26 @@ std::string Channel::get_pass()
 void Channel::set_pass(std::string pass)
 {
 	this->_password = pass;
+}
+
+int	Channel::get_limit()
+{
+	return this->_limit;
+}
+
+void Channel::set_limit(int limit)
+{
+	this->_limit = limit;
+}
+
+void Channel::set_narrowcast(int val)
+{
+	this->_narrowcast = val;
+}
+
+int Channel::get_narrowcast()
+{
+	return this->_narrowcast;
 }
 
 Channel::~Channel() {}

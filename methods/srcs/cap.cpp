@@ -1,5 +1,6 @@
 #include "../includes/cap.hpp"
 
+
 Cap::Cap(std::map<int, User> &users) : _users(users)
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
