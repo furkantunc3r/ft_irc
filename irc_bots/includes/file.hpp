@@ -31,25 +31,35 @@
 #define GET "GET"
 #define REJECT "REJECT"
 
+#define SIZE 1024
+
 class File : public IMethod {
 	private:
-		int									listen_fd;
-		struct sockaddr_in					addr;
+		int									send_fd;
+		int									get_fd;
+		struct sockaddr_in					send_addr;
+		struct sockaddr_in					get_addr;
 		std::map<int, User>&				users;
 		std::vector<pollfd>					fds;
-		// std::map<int, std::string>			files;
+		std::map<int, std::string>			files;
 		int									new_fd;
 
 	public:
 		File(std::map<int, User> &_users);
 		~File();
 		
-		void	create_socket();
+		void	create_socket(int fd, struct sockaddr_in addr);
 		void	do_listen(int fd, size_t listen_count);
-		void	do_accept(int fd);
-		void	send_file(User user, std::vector<std::string> &args);
-		void	get_file(User user, std::vector<std::string> &args);
-		void	execute(std::vector<std::string>& args, int fd);
+		void	do_accept();
+		void	do_connect();
+		// void	help();
+		// void	reject();
+		std::string		get_file_data(User user, std::string owner_nick, std::string file);
+		std::ofstream	create_file(User user, std::string file);
+		int				check_owner(User user, std::string file);
+		void			send_file(User user, std::vector<std::string> &args);
+		void			get_file(int fd, User user, std::ofstream &_file);
+		void			execute(std::vector<std::string>& args, int fd);
 };
 
 #endif

@@ -1,18 +1,6 @@
-8bbf183 HEAD@{0}: checkout: moving from acetin to master
-8f547e1 HEAD@{1}: reset: moving to HEAD~2
-29ad4cb HEAD@{2}: reset: moving to HEAD~1
-92a23c6 HEAD@{3}: checkout: moving from master to acetin
-8bbf183 HEAD@{4}: commit (merge): 26.04
-616b13f HEAD@{5}: checkout: moving from ftuncer to master
-616b13f HEAD@{6}: checkout: moving from acetin to ftuncer
-92a23c6 HEAD@{7}: checkout: moving from ftuncer to acetin
-616b13f HEAD@{8}: checkout: moving from master to ftuncer
-616b13f HEAD@{9}: commit: 25.04
-fd93ae3 HEAD@{10}: checkout: moving from acetin to master
-92a23c6 HEAD@{11}: checkout: moving from master to acetin
-fd93ae3 HEAD@{12}: commit: startedDCC
-694e022 HEAD@{13}: commit: prvmsg
-1af1ffe HEAD@{14}: commit: asd
-be561ca HEAD@{15}: pull: Fast-forward
-92a23c6 HEAD@{16}: commit: part...
-29ad4cb HEAD@{17}: clone: from git@github.com:furkantunc3r/ft_irc.git
+denepâ:¡Eme
+deneme
+deneme
+deneme
+deneme
+deneme

@@ -3,152 +3,227 @@
 File::File(std::map<int, User> &_users) : users(_users)
 {
 	int optval = 1;
-	
-	memset(&this->addr, 0, sizeof(this->addr));
-	
-	this->addr.sin_family = AF_INET;
-	this->addr.sin_addr.s_addr = INADDR_ANY;
-	this->addr.sin_port = htons(4445);
-	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-	this->create_socket();
-	this->do_listen(this->listen_fd, 10);
+
+	memset(&this->send_addr, 0, sizeof(this->send_addr));
+
+	this->send_fd = socket(AF_INET, SOCK_STREAM, 0);
+	this->send_addr.sin_family = AF_INET;
+	this->send_addr.sin_addr.s_addr = INADDR_ANY;
+	this->send_addr.sin_port = htons(4445);
+	this->create_socket(send_fd, send_addr);
+
+	memset(&this->get_addr, 0, sizeof(this->get_addr));
+	this->get_fd = socket(AF_INET, SOCK_STREAM, 0);
+	this->get_addr.sin_family = AF_INET;
+	this->get_addr.sin_addr.s_addr = INADDR_ANY;
+	this->get_addr.sin_port = htons(4445);
+	this->create_socket(get_fd, get_addr);
+	if (bind(get_fd, (struct sockaddr *)&get_addr, sizeof(get_addr)))
+		error("bind() failed ", get_fd);
+	if (fcntl(get_fd, F_SETFL, O_NONBLOCK) < 0)
+		error("fcnt() failed ", get_fd);
+	this->do_listen(get_fd, 10);
 }
 
-File::~File(){}
+File::~File() {}
 
-void File::create_socket()
+void File::create_socket(int fd, struct sockaddr_in addr)
 {
 	int optval = 1;
 
-	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (this->listen_fd < 0)
-		error("socket () failed ", this->listen_fd);
-	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR , &optval, sizeof(optval)) < 0)
-		error("setsockopt() failed ", this->listen_fd);
-	// if (setsockopt(this->listen_fd, IPPROTO_TCP, TCP_NODELAY , &optval, sizeof(optval)) < 0)
-	// 	error("setsockopt() failed ", this->listen_fd);
-	if (fcntl(this->listen_fd, F_SETFL, O_NONBLOCK) < 0)
-		error("fcnt() failed ", this->listen_fd);
-	if (bind(this->listen_fd, (struct sockaddr *)&addr, sizeof(addr)))
-		error("bind() failed ", this->listen_fd);
+	if (fd < 0)
+		error("socket () failed ", fd);
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+		error("setsockopt() failed ", fd);
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) < 0)
+		error("setsockopt() failed ", fd);
 }
 
 void File::do_listen(int fd, size_t listen_count)
 {
 	if (listen(fd, listen_count) < 0)
 	{
-		error("listen() failed ", this->listen_fd);
-		return ;
+		error("listen() failed ", this->send_fd);
+		return;
 	}
 	this->fds.push_back((pollfd){fd, POLLIN, 0});
 }
 
-void File::do_accept(int fd)
+void File::do_accept()
 {
-	this->new_fd = accept(this->listen_fd, NULL, NULL);
+	this->new_fd = accept(this->get_fd, NULL, NULL);
 	if (new_fd < 0)
 		perror("accept ");
 	this->fds.push_back((pollfd){new_fd, POLLIN, 0});
 }
 
-void File::send_file(User user, std::vector<std::string> &args)
+void File::do_connect()
 {
-	std::ifstream _file;
-	size_t len = 0;
-	std::vector<std::string> temp;
-
-	temp = parse(args[3], "/");
-	// std::pair<User, std::string>   p( user, temp.back());
-	// this->files.insert(std::pair<User, std::string>(user, temp.back()));
-	std::cout << args[3] << std::endl;
-	_file.open(args[3]);
-	if (!_file.is_open())
-		perror("File ");
-	std::string data((std::istreambuf_iterator<char>(_file)), (std::istreambuf_iterator<char>()));
-	_file.close();
-	std::string _size(std::to_string(data.size()) + "\r\n");
-	
-	if(send(new_fd, _size.c_str(), _size.size(), 0) < 0)
-	{
-		perror(std::string("send file " + std::to_string(new_fd) + " ").c_str());
-		return;
-	}
-	while(len < data.size())
-	{
-		if (send(new_fd, data.c_str(), 512, 0) < 0)
-		{
-			perror(std::string("send1 file " + std::to_string(new_fd) + " ").c_str());
-			break;
-		}
-		len += 512;
-	}
-	std::cout << "gitti" << std::endl;
+	if (connect(this->send_fd, (struct sockaddr *)&send_addr, sizeof(send_addr)) < 0)
+		perror("connect ");
 }
 
-void File::get_file(User user, std::vector<std::string> &args)
+std::string	 File::get_file_data(User user, std::string owner_nick, std::string file)
+{
+	std::ifstream _file;
+	std::string data;
+	_file.open(file);
+	if (!_file.is_open())
+	{
+		std::string msg(user._prefix + " 461 " + user._nickname + " :File not found\r\n");
+		send(user._fd, msg.c_str(), msg.size(), 0);
+		return data;
+	}
+	std::map<int, User>::iterator it = users.begin();
+	for(; it != users.end(); it++)
+	{
+		if (it->second._nickname == owner_nick)
+			break;
+	}
+	if (it != users.end())
+		this->files.insert(std::make_pair(it->second._fd, parse(file, "/").back()));
+	else
+	{
+		std::string msg(user._prefix + " 461 " + user._nickname + " :user not found\r\n");
+		send(user._fd, msg.c_str(), msg.size(), 0);
+		return data;
+	}
+	data.append((std::istreambuf_iterator<char>(_file)), (std::istreambuf_iterator<char>()));
+	return data;
+}
+
+void File::send_file(User user, std::vector<std::string> &args)
+{
+	size_t len = 0;
+	std::string data;
+	std::string msg;
+	if (args.size() != 4)
+	{
+		msg.append(user._prefix + " 461 " + user._nickname + " :Insufficent parameters\r\n");
+		send(user._fd, msg.c_str(), msg.size(), 0);
+		return;
+	}
+	if (data.append(get_file_data(user, args[2], args[3])).empty())
+		return;
+	std::string _size(std::to_string(data.length()) + "\r\n");
+	for (std::map<int, User>::iterator it = this->users.begin(); it != this->users.end(); it++)
+    {
+        if (!strncmp(it->second._nickname.c_str(), args[2].c_str(), it->second._nickname.size()))
+        {
+			msg.append(user._prefix + "PRIVMSG " + args[2] + " send to "+ parse(args[3], "/").back() + "\r\n");
+			std::cout << msg << std::endl;
+            send(it->second._fd, msg.c_str(), msg.size(), 0);
+            break;;
+        }
+    }
+	msg.clear();
+	if (send(send_fd, _size.c_str(), _size.size(), 0) < 0)
+	{
+		msg.append(user._prefix + " 461 " + user._nickname + " :Failed\r\n");
+		send(user._fd, msg.c_str(), msg.size(), 0);
+		return;
+	}
+	while (len < data.size())
+	{
+		if (send(send_fd, data.c_str() + len, SIZE, 0) < 0)
+		{
+			perror("send file ");
+			break;
+		}
+		len += SIZE;
+	}
+	msg.append(user._prefix + " NOTICE " + user._nickname + " : Success\r\n");
+	send(user._fd, msg.c_str(), msg.size(), 0);
+}
+
+std::ofstream File::create_file(User user, std::string file)
 {
 	std::ofstream _file;
+	
+	if (this->files.find(user._fd) == this->files.end())
+		return _file;
+	std::map<int, std::string>::iterator i = files.begin();
+	for (; i != files.end(); i++)
+	{
+		if (i->second == file)
+			break;
+	}
+	if (i == files.end())
+		return _file;
+	std::string source("/mnt/c/Users/Abdullah/Desktop/ft_irc/" + file);
+	std::cout << source << std::endl;
+	_file.open(source, std::iostream::trunc);
+	return _file;
+}
+
+void File::get_file(int fd, User user,std::ofstream &_file)
+{
 	std::string data;
-	char buffer[512];
+	char *buffer = new char[1024];
 	size_t len = 0;
 	size_t _size = 0;
 	std::vector<std::string> temp;
-	// std::multimap<User, std::string>::iterator it  = this->files.begin();
 	memset(buffer, 0, sizeof(buffer));
-	// s
-	_file.open(args[3], std::iostream::trunc);
-	if (!_file.is_open())
-		perror("File :");
-	if(recv(listen_fd, buffer, sizeof(buffer), 0) < 0)
+	if(recv(fd, buffer, sizeof(buffer), 0) < 0)
 	{
-			perror("get file : ");
-			return;
+		perror("get file : ");
+		return;
 	}
 	temp = parse(buffer, "\r\n");
 	_size = atoi(temp[0].c_str());
-	data.append(temp[1]);
-	while(len < _size)
+	if (temp.size() > 1)
+		_file << temp[1];
+	memset(buffer, 0, sizeof(buffer));
+	while(_file.tellp() < _size)
 	{
-		if (recv(listen_fd, buffer, sizeof(buffer), 0) < 0)
+		if (recv(fd, buffer, _size, 0) < 0)
 		{
 			perror("get file : ");
 			break;
 		}
-		data.append(buffer);
-		len += sizeof(buffer);
+		_file << buffer;
 		memset(buffer, 0, sizeof(buffer));
 	}
-	std::cout << "geldi" << std::endl;
 	_file.close();
+	close(fd);
+	this->files.erase(user._fd);
+	std::cout << "geldi\n" << std::endl;
 }
 
-void	File::execute(std::vector<std::string> &args, int fd)
+void File::execute(std::vector<std::string> &args, int fd)
 {
-	
 	std::transform(args[1].begin(), args[1].end(), args[1].begin(), ::toupper);
-	
-	// if (poll(fds.begin().base(), fds.size(), -1) < 0)
-	// 	return ;
-	for (size_t i = 0; i < fds.size(); i++)
+	if (args[1] == "SEND")
 	{
-		// if (fds[i].revents & POLLIN)
-		{
-			if (fds[i].fd == listen_fd)
-				do_accept(fd);
-			if (args[1] == "SEND")
-				send_file(this->users.find(fd)->second, args);
-			else if(args[1] == "GET")
-				send_file(this->users.find(fd)->second, args);
-		}
-		std::cout << "aaaaa\n";
+		do_connect();
+		send_file(this->users.find(fd)->second, args);
 	}
-	for(std::vector<pollfd>::iterator i = fds.begin(); i != fds.end(); i++)
+	else if (args[1] == "GET")
 	{
-		if ((*i).fd == fd)
+		if (args.size() != 3)
 		{
-			fds.erase(i);
-			break;
+			std::string msg(this->users.find(fd)->second._prefix + " 461 " + this->users.find(fd)->second._nickname + " :Insufficent parameters\r\n");
+			send(this->users.find(fd)->second._fd, msg.c_str(), msg.size(), 0);
+			return;
 		}
+		std::ofstream _file = create_file(this->users.find(fd)->second, args[2]);
+		if (!_file.is_open())
+		{
+			std::string msg(this->users.find(fd)->second._prefix + " 461 " + this->users.find(fd)->second._nickname + " :Something is wrong\r\n");
+			send(this->users.find(fd)->second._fd, msg.c_str(), msg.size(), 0);
+			return ;
+		}
+		if (poll(fds.begin().base(), fds.size(), -1) < 0)
+			return;
+		for (size_t i = 0; i < fds.size(); i++)
+		{
+			if (fds[i].revents & POLLIN)
+			{
+				if (fds[i].fd == get_fd)
+					do_accept();
+				get_file(new_fd, this->users.find(fd)->second, _file);
+			}
+		}
+		
 	}
-	close(listen_fd);
 }
