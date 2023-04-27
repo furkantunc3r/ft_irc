@@ -3,7 +3,6 @@
 Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), new_fd(-1), listen_fd(-1), _pass(pass) 
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
-	memset((char *)&this->cli_addr, 0, sizeof(this->cli_addr));
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_port = htons(this->port);
@@ -18,11 +17,11 @@ Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), new
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
+	this->method["FILE"] = new File(this->users);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 
 	this->create_socket();
 	this->do_listen(this->listen_fd, 10);
-
 }
 
 Server::~Server()
@@ -59,7 +58,7 @@ void Server::do_listen(int fd, size_t listen_count)
 		return ;
 	}
 	std::cout << "Listen " << this->port << std::endl;
-	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
+	this->fds.push_back((pollfd){fd, POLLIN, 0});
 }
 
 
@@ -69,6 +68,7 @@ void Server::execute(std::string arg, int fd)
 	std::vector<std::string> cmd2 = parse(cmd[0], " \r\t\n");
 	if (cmd.size() > 1)
 		cmd2.push_back(cmd[1]);
+	std::transform(cmd2[0].begin(), cmd2[0].end(), cmd2[0].begin(), ::toupper);
 	std::map<std::string, IMethod *>::iterator it = this->method.find(cmd2[0]);
 	if (it != this->method.end())
 		it->second->execute(cmd2, fd);
@@ -125,10 +125,7 @@ void Server::do_recv(pollfd _fds)
 
 void Server::do_accept()
 {
-	memset((char *)&this->cli_addr, 0, sizeof(this->cli_addr));
-	socklen_t len = sizeof(cli_addr);
-
-	this->new_fd = accept(this->listen_fd, (struct sockaddr *)&cli_addr, &len);
+	this->new_fd = accept(this->listen_fd, NULL, NULL);
 	this->fds.push_back((pollfd){new_fd, POLLIN, 0});
 }
 
@@ -160,16 +157,4 @@ void Server::print_users()
 std::string Server::get_pass()
 {
 	return this->_pass;
-}
-
-std::string Server::get_cli_ip(){
-	char ip[INET_ADDRSTRLEN];
-	memset(ip, 0, sizeof(ip));
-	inet_ntop(AF_INET, &(cli_addr.sin_addr), ip, INET_ADDRSTRLEN);
-	if (ip == NULL)
-	{
-		perror("User ip :");
-		return NULL;
-	}
-	return std::string(ip);
 }

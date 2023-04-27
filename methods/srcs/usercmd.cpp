@@ -33,6 +33,6 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
     it->second._realname = args[4];
     it->second._is_regis = 1;
     it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
-    // std::cout << "------------------------ " << it->second._prefix << std::endl;
+    std::cout << "------------------------ " << it->second._prefix << std::endl;
   }
 }

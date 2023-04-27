@@ -32,6 +32,7 @@
 #include "../../methods/includes/ping.hpp"
 #include "../../methods/includes/part.hpp"
 #include "../../methods/includes/mode.hpp"
+#include "../../irc_bots/includes/file.hpp"
 
 class Server{
 
@@ -41,7 +42,6 @@ class Server{
 		int									new_fd;
 		std::string							msg;
 		struct sockaddr_in					addr;
-		struct sockaddr_in					cli_addr;
 		std::vector<pollfd>					fds;
 
 		std::map<int, User>					users;
@@ -61,7 +61,6 @@ class Server{
 		void				execute(std::string, int fd);
 		void				print_users();
 		// void				loop();
-		std::string			get_cli_ip();
 
 		int					get_user_fd_if_on_server(std::string name);
 		User&				get_user(int fd);

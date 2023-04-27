@@ -39,5 +39,6 @@ void Nick::execute(std::vector<std::string> &args, int fd)
         send(fd, msg.c_str(), msg.size(), 0);
         it->second._nickname = args[1];
 		it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
+	    std::cout << "------------------------ " << it->second._prefix << std::endl;
     }
 }

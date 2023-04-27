@@ -55,6 +55,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 			}
 			std::string a(user_it->second._prefix + "JOIN ");
 			a.append(arg[1] + "\r\n");
+			std::cout << a << std::endl;
 			send(fd, a.c_str(), a.length(), 0);
 		}
 	}

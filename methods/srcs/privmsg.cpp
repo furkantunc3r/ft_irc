@@ -1,6 +1,6 @@
 #include "../includes/privmsg.hpp"
 
-Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), _dcc() {}
+Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels){}
 
 Privmsg::~Privmsg() {}
 
@@ -56,8 +56,6 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     }
     else 
     {
-		if (tts.find("DCC") != tts.npos || tts.find("SHA") != tts.npos)
-			this->_dcc.execute(parse(tts, " "));
         for (it = this->_users.begin(); it != this->_users.end(); it++)
         {
             if (!strncmp(it->second._nickname.c_str(), args[1].c_str(), it->second._nickname.size()))

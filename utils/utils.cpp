@@ -47,3 +47,9 @@ void error(std::string msg, int fd)
 	close(fd);
 	exit(EXIT_FAILURE);
 }
+
+// void error(std::string msg, int fd)
+// {
+// 	perror(msg.c_str());
+// 	close(fd);
+// }
