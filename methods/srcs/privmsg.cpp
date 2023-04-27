@@ -6,6 +6,10 @@ Privmsg::~Privmsg() {}
 
 void Privmsg::execute(std::vector<std::string> &args, int fd)
 {
+    std::cout << ">Privmsg TEST<\n";
+	for (size_t i = 0; i < args.size(); i++)
+		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
+
     std::map<int, User>::iterator it;
     std::string msg;
     std::string tts;
@@ -17,36 +21,41 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         return;
     }
 
-    for (size_t i = 4; i < args.size(); i++)
-            tts.append(args[i]);
+    tts.append(trim(args[2], ':'));
 
-    if (args[2].at(0) == '#')
+    if (args[1][0] == '#')
     {
-        std::map<std::string, Channel>::iterator ite = this->_channels.find(args[2]);
+        std::map<std::string, Channel>::iterator ite = this->_channels.find(args[1]);
+        it = this->_users.find(fd);
         if (ite == this->_channels.end())
         {
-            it = this->_users.find(fd);
             msg.clear();
-            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
+            msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;   
         }
         std::vector<int> fds(ite->second.get_fds());
         for (size_t i = 0; i < fds.size(); i++)
         {
-            msg.append(":" + this->_users.find(fds[i])->second._nickname + "!" + this->_users.find(fds[i])->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
-            send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
+            if (fds[i] != fd)
+            {
+                msg.append(it->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+				
+                send(this->_users.find(fds[i])->second._fd, msg.c_str(), msg.size(), 0);
+            }
+			std::cout << it->second._prefix << std::endl;
         }
         msg.clear();
         return ;
     }
     else 
     {
-        msg.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@localhost " + "PRIVMSG " + args[2] + " " + tts + "\r\n");
         for (it = this->_users.begin(); it != this->_users.end(); it++)
         {
-            if (it->second._nickname == args[2])
+            if (!strncmp(it->second._nickname.c_str(), args[1].c_str(), it->second._nickname.size()))
             {
+				msg.append(this->_users.find(fd)->second._prefix + "PRIVMSG " + args[1] + " " + tts + "\r\n");
+				std::cout << msg << std::endl;
                 send(it->second._fd, msg.c_str(), msg.size(), 0);
                 return;
             }
@@ -56,7 +65,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
         {
             it = this->_users.find(fd);
             msg.clear();
-            msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 401 " + it->second._nickname + " :" + args[2] + " :No such nick or channel\r\n");
+            msg.append(it->second._prefix + " 401 " + it->second._nickname + " :" + args[1] + " :No such nick or channel\r\n");
             send(it->second._fd, msg.c_str(), msg.size(), 0);
             return;
         }

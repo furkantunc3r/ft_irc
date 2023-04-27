@@ -1,7 +1,7 @@
 #include "../includes/quit.hpp"
 
-Quit::Quit(std::map<int, User> &users, std::vector<pollfd> &fds, std::map<std::string, Channel> &channels) : _users(users), _fds(fds), _channels(channels), LeavingBot(users, channels) {
-	_message = new Message(_users, _channels);
+Quit::Quit(std::map<int, User> &users, std::vector<pollfd> &fds, std::map<std::string, Channel> &channels) :  LeavingBot(users, channels), _fds(fds), _users(users), _channels(channels){
+	_message = new Privmsg(_users, _channels);
 }
 
 Quit::~Quit() {
@@ -10,23 +10,28 @@ Quit::~Quit() {
 
 void Quit::execute(std::vector<std::string> &arg, int fd)
 {
-    if (arg[2].size() > 160)
+	Part part(this->_channels);
+    if (arg[1].size() > 160)
     {
         send(fd, "Quit message cannot exceed 160 characters\r\n", 43, 0);
         return ;
     }
-    std::string buffer;
-    std::vector<pollfd>::iterator it = this->_fds.begin();
-    for(; it->fd != fd; it++) {}
-    // buffer.append(":" + this->_users.find(fd)->second._nickname + "!" + this->_users.find(fd)->second._username + "@" + "localhost" + " QUIT " + arg[2]);
-    send(fd, buffer.c_str(), buffer.size(), 0);
-	std::string reason;
-	trim(arg[2], ':');
-	for (size_t i = 2; i < arg.size(); i++)
-		reason.append(arg[i]);
-	reason.append("\r\n");
+
+    std::vector<pollfd>::iterator fd_it = this->_fds.begin();
+    for(; fd_it->fd != fd; fd_it++) {}
+	std::string reason(trim(arg.back(), ':') + "\r\n");
 	this->send_message(fd, reason);
-    this->_fds.erase(it);
-    this->_users.erase(fd);
+	
+	std::map<int, User>::iterator _user_it = this->_users.find(fd);
+    if (_user_it != this->_users.end())
+	{
+		for (size_t i = 0; i < _user_it->second._channels.size(); i++)
+		{
+			std::vector<std::string> a(2, _user_it->second._channels[i]);
+			part.execute(a, fd);
+		}
+		this->_users.erase(_user_it);
+    	this->_fds.erase(fd_it);
+	}
     close(fd);
 }

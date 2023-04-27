@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "../../methods/includes/message.hpp"
+#include "../../methods/includes/privmsg.hpp"
 #include "../../user/includes/user.hpp"
 #include "../../channel/includes/channel.hpp"
 #include "../../utils/utils.hpp"
@@ -14,7 +14,7 @@ class LeavingBot{
 		std::map<int, User>					&_users;
 		std::map<std::string, Channel>		&_channels;
 	public:
-		Message _message;
+		Privmsg _message;
 		
 		LeavingBot(std::map<int, User> &_users, std::map<std::string, Channel> &_channels);
 		~LeavingBot();
