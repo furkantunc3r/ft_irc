@@ -4,7 +4,9 @@
 Cap::Cap(std::map<int, User> &users) : _users(users)
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
+	User _filterbot("FilTer_BoT", "irc", -2);
 	this->_users.insert(std::make_pair(-1, _leavingbot));
+	this->_users.insert(std::make_pair(-2, _filterbot));
 }
 
 Cap::~Cap() {}
