@@ -4,6 +4,8 @@ Cap::Cap(std::map<int, User> &users, Server &server) : _users(users), _server(se
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
 	this->_users.insert(std::make_pair(-1, _leavingbot));
+	User _file_transfer("file", "irc_file", -3);
+	this->_users.insert(std::make_pair(-3, _file_transfer));
 }
 
 Cap::~Cap() {}

@@ -22,6 +22,8 @@
 #include <fstream>
 #include <sstream>
 #include <cerrno>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../../utils/utils.hpp"
 #include "../../user/includes/user.hpp"
 #include "../../methods/includes/imethod.hpp"
@@ -43,23 +45,20 @@ class File : public IMethod {
 		std::vector<pollfd>					fds;
 		std::map<int, std::string>			files;
 		int									new_fd;
+		std::string							_file_name;
+		std::string							_file_data;
+		size_t								_file_size;
 
 	public:
 		File(std::map<int, User> &_users);
 		~File();
-		
-		void	create_socket(int fd, struct sockaddr_in addr);
-		void	do_listen(int fd, size_t listen_count);
-		void	do_accept();
+
 		void	do_connect();
-		// void	help();
-		// void	reject();
-		std::string		get_file_data(User user, std::string owner_nick, std::string file);
-		std::ofstream	create_file(User user, std::string file);
-		int				check_owner(User user, std::string file);
-		void			send_file(User user, std::vector<std::string> &args);
-		void			get_file(int fd, User user, std::ofstream &_file);
-		void			execute(std::vector<std::string>& args, int fd);
+		void	init_file_data();
+		void	send_file(std::string target);
+		void	create_file();
+		void	execute(std::vector<std::string>& args, int fd);
+		User	&find_user(std::string _nick);
 };
 
 #endif

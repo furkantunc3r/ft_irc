@@ -12,7 +12,8 @@ void Nick::execute(std::vector<std::string> &args, int fd)
 
     std::map<int, User>::iterator it;
     std::string msg;
-    if (this->_users.find(fd)->second._joinable != -1)
+	it = this->_users.find(fd); 
+    if (it != this->_users.end() && it->second._joinable != -1)
     {
         if (args.empty() || args[1].empty())
         {

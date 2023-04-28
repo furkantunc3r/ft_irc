@@ -66,8 +66,8 @@ void Server::execute(std::string arg, int fd)
 {
 	std::vector<std::string> cmd = parse(arg, ":");
 	std::vector<std::string> cmd2 = parse(cmd[0], " \r\t\n");
-	if (cmd.size() > 1)
-		cmd2.push_back(cmd[1]);
+	for (size_t i = 1; i < cmd.size(); i++)
+		cmd2.push_back(cmd[i]);
 	std::transform(cmd2[0].begin(), cmd2[0].end(), cmd2[0].begin(), ::toupper);
 	std::map<std::string, IMethod *>::iterator it = this->method.find(cmd2[0]);
 	if (it != this->method.end())
@@ -105,10 +105,10 @@ bool Server::search_channel(std::string name)
 void Server::do_recv(pollfd _fds)
 {
 	int rc = 1;
-	char *buffer = new char[1024];
-	memset(buffer, 0, 1024);
-	rc = recv(_fds.fd, buffer, 1024, 0);
-	std::cout <<"auuuuuuu " <<buffer << std::endl;
+	char *buffer = new char[4096];
+	memset(buffer, 0, 4096);
+	rc = recv(_fds.fd, buffer, 4096, 0);
+	std::cout << buffer << std::endl;
 	std::vector<std::string> temp = parse(buffer, "\r\n");
 	for (size_t i = 0; i < temp.size(); i++)
 		this->execute(temp[i], _fds.fd);

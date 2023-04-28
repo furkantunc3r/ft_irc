@@ -1,6 +1,6 @@
 #include "../includes/privmsg.hpp"
 
-Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels){}
+Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), _file(users){}
 
 Privmsg::~Privmsg() {}
 
@@ -12,7 +12,15 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     std::map<int, User>::iterator it;
     std::string msg;
     std::string tts;
-
+	if (args[2].find("DCC") != args[2].npos || args[2].find("SHA-256") != args[2].npos)
+	{
+		std::vector<std::string> temp = parse(args[2], " ");
+		if (args[2].find("SHA-256") != args[2].npos)
+			temp.push_back(args.back());
+		temp.push_back(args[1]);
+		_file.execute(temp, fd);
+		return;
+	}
     if (args.size() < 2 || args[0].empty() || args[1].empty())
     {
         msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
