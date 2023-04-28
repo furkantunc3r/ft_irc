@@ -1,10 +1,6 @@
 #include "../includes/server.hpp"
 
-<<<<<<< HEAD
-Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), new_fd(-1), listen_fd(-1), _pass(pass) 
-=======
-Server::Server(char *arg, char *pass) : port(atoi(arg)), listen_fd(-1), new_fd(-1), fds(), _pass(std::string(pass))
->>>>>>> 30239a0ac2ac1ff6c88c411eb6c46ef1211ad141
+Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), listen_fd(-1), new_fd(-1),  _pass(pass) 
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 	this->addr.sin_family = AF_INET;

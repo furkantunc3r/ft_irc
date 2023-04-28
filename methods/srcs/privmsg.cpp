@@ -1,6 +1,6 @@
 #include "../includes/privmsg.hpp"
 
-Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), FilterBot(users, channels) {
+Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : FilterBot(users, channels), _users(users), _channels(channels), _file(users) {
     // _bot = new FilterBot(_users, _channels);
 }
 

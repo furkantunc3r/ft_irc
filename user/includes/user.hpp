@@ -12,7 +12,6 @@ class User
         std::string					_password;
     
     public:
-        std::string					_password;
         int                         _fd;
         std::string                 _nickname;
         std::string                 _username;
