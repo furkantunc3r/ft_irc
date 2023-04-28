@@ -47,6 +47,11 @@ int Channel::get_admin_fd()
 	return this->_admin_fd;
 }
 
+void Channel::set_admin_fd(int fd)
+{
+	this->_admin_fd = fd;
+}
+
 const std::string Channel::get_name() const
 {
 	return this->_name;

@@ -11,18 +11,28 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     std::cout << ">Privmsg TEST<\n";
 	for (size_t i = 0; i < args.size(); i++)
 		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
-
     std::map<int, User>::iterator it;
     std::string msg;
     std::string tts;
-
+	if (args[2].find("DCC") != args[2].npos || args[2].find("SHA-256") != args[2].npos)
+	{
+		std::vector<std::string> temp = parse(args[2], " ");
+		if (args[2].find("SHA-256") != args[2].npos)
+			temp.push_back(args.back());
+		temp.push_back(args[1]);
+		_file.execute(temp, fd);
+		return;
+	}
     if (args.size() < 2 || args[0].empty() || args[1].empty())
     {
-        msg.append(":" + it->second._nickname + "!" + it->second._username + "localhost" + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+        msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
         send(fd, msg.c_str(), msg.size(), 0);
         return;
     }
 
+	for (size_t i = 2; i < args.size(); i++)
+		tts.append(trim(args[i], ':'));
+	
     tts.append(trim(args[2], ':'));
 
     if (!this->check_message(fd, tts))
@@ -58,7 +68,6 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
 			std::cout << it->second._prefix << std::endl;
         }
         msg.clear();
-        return ;
     }
     else 
     {

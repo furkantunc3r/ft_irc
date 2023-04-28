@@ -1,9 +1,12 @@
 #include "../includes/server.hpp"
 
+<<<<<<< HEAD
+Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), new_fd(-1), listen_fd(-1), _pass(pass) 
+=======
 Server::Server(char *arg, char *pass) : port(atoi(arg)), listen_fd(-1), new_fd(-1), fds(), _pass(std::string(pass))
+>>>>>>> 30239a0ac2ac1ff6c88c411eb6c46ef1211ad141
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
-
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_port = htons(this->port);
@@ -18,15 +21,18 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), listen_fd(-1), new_fd(-
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
-	this->method["MODE"] = new Mode(*this);
+	this->method["FILE"] = new File(this->users);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
+
+	this->create_socket();
+	this->do_listen(this->listen_fd, 10);
 }
 
 Server::~Server()
 {
-	std::map<std::string, IMethod *>::iterator it = this->method.begin();
-	for (; it != this->method.end(); it++)
-		delete it->second;
+	std::map<std::string, IMethod *>::iterator method_it = this->method.begin();
+	for (; method_it != this->method.end(); method_it++)
+		delete method_it->second;
 }
 
 void Server::create_socket()
@@ -36,7 +42,9 @@ void Server::create_socket()
 	this->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->listen_fd < 0)
 		error("socket () failed ", this->listen_fd);
-	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0 || setsockopt(this->listen_fd, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) < 0)
+	if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR , &optval, sizeof(optval)) < 0)
+		error("setsockopt() failed ", this->listen_fd);
+	if (setsockopt(this->listen_fd, IPPROTO_TCP, TCP_NODELAY , &optval, sizeof(optval)) < 0)
 		error("setsockopt() failed ", this->listen_fd);
 	if (fcntl(this->listen_fd, F_SETFL, O_NONBLOCK) < 0)
 		error("fcnt() failed ", this->listen_fd);
@@ -44,12 +52,17 @@ void Server::create_socket()
 		error("bind() failed ", this->listen_fd);
 }
 
+
+
 void Server::do_listen(int fd, size_t listen_count)
 {
 	if (listen(fd, listen_count) < 0)
+	{
 		error("listen() failed ", this->listen_fd);
+		return ;
+	}
 	std::cout << "Listen " << this->port << std::endl;
-	this->fds.push_back((pollfd){listen_fd, POLLIN, 0});
+	this->fds.push_back((pollfd){fd, POLLIN, 0});
 }
 
 
@@ -57,8 +70,9 @@ void Server::execute(std::string arg, int fd)
 {
 	std::vector<std::string> cmd = parse(arg, ":");
 	std::vector<std::string> cmd2 = parse(cmd[0], " \r\t\n");
-	if (cmd.size() > 1)
-		cmd2.push_back(cmd[1]);
+	for (size_t i = 1; i < cmd.size(); i++)
+		cmd2.push_back(cmd[i]);
+	std::transform(cmd2[0].begin(), cmd2[0].end(), cmd2[0].begin(), ::toupper);
 	std::map<std::string, IMethod *>::iterator it = this->method.find(cmd2[0]);
 	if (it != this->method.end())
 		it->second->execute(cmd2, fd);
@@ -95,16 +109,15 @@ bool Server::search_channel(std::string name)
 void Server::do_recv(pollfd _fds)
 {
 	int rc = 1;
-	char *buffer = new char[100];
-	memset(buffer, 0, 100);
-	rc = recv(_fds.fd, buffer, 100, 0);
+	char *buffer = new char[4096];
+	memset(buffer, 0, 4096);
+	rc = recv(_fds.fd, buffer, 4096, 0);
+	std::cout << buffer << std::endl;
 	std::vector<std::string> temp = parse(buffer, "\r\n");
 	for (size_t i = 0; i < temp.size(); i++)
 		this->execute(temp[i], _fds.fd);
-	// std::cout << rc << std::endl;
 	if (rc <= 0)
 	{
-		// perror("recv ()");
 		std::cout << "  Connection closed" << std::endl;
 		std::vector<pollfd>::iterator it = this->fds.begin();
 		for (; it->fd != _fds.fd; it++){}
@@ -120,29 +133,8 @@ void Server::do_accept()
 	this->fds.push_back((pollfd){new_fd, POLLIN, 0});
 }
 
-void Server::loop()
-{
-	this->create_socket();
-	this->do_listen(this->listen_fd, 1024);
-	while (1)
-	{
-		if (poll(fds.begin().base(), fds.size(), -1) < 0)
-			perror("poll() failed");
-		for (size_t i = 0; i < fds.size(); i++)
-		{
-			if (fds[i].revents & POLLIN)
-			{
-				if (fds[i].fd == this->listen_fd)
-					this->do_accept();
-				else
-				{
-					this->do_recv(fds[i]);
-					this->print_users();
-				}
-			}
-		}
-	}
-}
+std::vector<pollfd> Server::get_fds() const {return this->fds;}
+int	Server::get_listen_fd(){return this->listen_fd;}
 
 void Server::erase_user(int fd)
 {
@@ -164,10 +156,6 @@ void Server::print_users()
 
 	for(; it != this->users.end(); it++)
 		std::cout << "Username: " << it->second._nickname << " " << "Connected fd: " << it->second._fd << " IS regis: " << it->second._is_regis << std::endl;
-
-	// for (size_t i = 0; i < this->users.size(); i++)
-	// 	std::cout << "Username: " << this->users[i]._nickname << " "
-	// 			  << "Connected fd: " << this->users[i]._fd << std::endl;
 }
 
 std::string Server::get_pass()

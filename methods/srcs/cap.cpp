@@ -6,7 +6,8 @@ Cap::Cap(std::map<int, User> &users) : _users(users)
 	User _leavingbot("NiGhT_BoT", "irc", -1);
 	User _filterbot("FilTer_BoT", "irc", -2);
 	this->_users.insert(std::make_pair(-1, _leavingbot));
-	this->_users.insert(std::make_pair(-2, _filterbot));
+	User _file_transfer("file", "irc_file", -3);
+	this->_users.insert(std::make_pair(-3, _file_transfer));
 }
 
 Cap::~Cap() {}
@@ -14,7 +15,7 @@ Cap::~Cap() {}
 void Cap::execute(std::vector<std::string> &arg, int fd)
 {
 	std::cout << ">CAP TEST<\n";
-	
+	(void)arg;
 	// bool does_exist = false;
 
 	// if (arg[7] != this->_server.get_pass())

@@ -1,30 +1,48 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <netinet/in.h>
-#include <errno.h>
-#include <cstring>
-#include <unistd.h>
-#include <fcntl.h>
-#include <iostream>
 #include "server/includes/server.hpp"
-#include <sstream>
+#include <signal.h>
+volatile sig_atomic_t signal_received = 1;
+void handler(int signal)
+{
+	(void)signal;
+	signal_received = 0;
+	
+}
 
-#define SERVER_PORT 1234
+void loop(Server *server){
+	std::vector<pollfd>	_fds;
 
-#define TRUE 1
-#define FALSE 0
+	while (signal_received)
+	{
+		_fds = server->get_fds();
+		if (poll(_fds.begin().base(), _fds.size(), -1) < 0)
+			break;
+		for (size_t i = 0; i < _fds.size(); i++)
+		{
+			if (_fds[i].revents & POLLIN)
+			{
+				if (_fds[i].fd == server->get_listen_fd())
+					server->do_accept();
+				else
+				{
+					server->do_recv(_fds[i]);
+					server->print_users();
+				}
+			}
+		}
+		_fds.clear();
+	}
+}
 
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, handler);
 	if (argc != 3)
 	{
 		std::cerr << "./ircserver <port> <pass>" << std::endl;
 		exit(1);
 	}
 	Server server(argv[1], argv[2]);
-	server.loop();
+	loop(&server);
+	server.~Server();
+	exit(1);
 }

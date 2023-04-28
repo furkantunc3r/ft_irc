@@ -12,8 +12,8 @@ void Nick::execute(std::vector<std::string> &args, int fd)
 
     std::map<int, User>::iterator it;
     std::string msg;
-
-    if (this->_users.find(fd)->second._joinable != -1)
+	it = this->_users.find(fd); 
+    if (it != this->_users.end() && it->second._joinable != -1)
     {
         if (args.empty() || args[1].empty())
         {
@@ -22,8 +22,6 @@ void Nick::execute(std::vector<std::string> &args, int fd)
             send(fd, msg.c_str(), msg.size(), 0);
             return;
         }
-
-        
         it = this->_users.begin();
         for (; it != this->_users.end(); it++)
         {
@@ -37,10 +35,11 @@ void Nick::execute(std::vector<std::string> &args, int fd)
             }
         }
 
-
         it = this->_users.find(fd);
         msg.append(it->second._prefix + " NICK " + args[1] + "\r\n");
         send(fd, msg.c_str(), msg.size(), 0);
         it->second._nickname = args[1];
+		it->second._prefix = ":" + it->second._nickname + "!" + it->second._username + "@localhost ";
+	    std::cout << "------------------------ " << it->second._prefix << std::endl;
     }
 }

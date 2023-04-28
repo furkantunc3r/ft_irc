@@ -28,11 +28,11 @@
 #include "../../methods/includes/nick.hpp"
 #include "../../methods/includes/usercmd.hpp"
 #include "../../methods/includes/privmsg.hpp"
-#include "../../methods/includes/oper.hpp"
 #include "../../methods/includes/kick.hpp"
 #include "../../methods/includes/ping.hpp"
 #include "../../methods/includes/part.hpp"
 #include "../../methods/includes/mode.hpp"
+#include "../../irc_bots/includes/file.hpp"
 
 class Server{
 
@@ -51,26 +51,28 @@ class Server{
 		std::string							_pass;
 
 	public:
-		Server(char* arg, char *pass);
+		Server(std::string arg, std::string pass);
 		~Server();
 
-		void	create_socket();
-		void	do_listen(int fd, size_t listen_count);
-		void	do_recv(pollfd _fds);
-		void	do_accept();
-		void	execute(std::string, int fd);
-		void	print_users();
-		void	loop();
+		void				create_socket();
+		void				do_listen(int fd, size_t listen_count);
+		void				do_recv(pollfd _fds);
+		void				do_accept();
+		void				execute(std::string, int fd);
+		void				print_users();
+		// void				loop();
 
-		int		get_user_fd_if_on_server(std::string name);
-		User&	get_user(int fd);
+		int					get_user_fd_if_on_server(std::string name);
+		User&				get_user(int fd);
 
-		Channel&	get_channel(std::string name);
-		bool		search_channel(std::string name);
+		Channel&			get_channel(std::string name);
+		bool				search_channel(std::string name);
 
-		std::string	get_pass();
-		void	erase_user(int fd);
-		void	erase_channel(std::string channel);
+		std::string			get_pass();
+		std::vector<pollfd>	get_fds() const;
+		int					get_listen_fd();
+		void				erase_user(int fd);
+		void				erase_channel(std::string channel);
 };
 
 #endif

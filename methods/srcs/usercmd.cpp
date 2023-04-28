@@ -1,5 +1,4 @@
 #include "../includes/usercmd.hpp"
-
 Usercmd::Usercmd(std::map<int, User> &users) : _users(users) {}
 
 Usercmd::~Usercmd() {}

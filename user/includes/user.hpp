@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 class User
 {
@@ -10,6 +12,7 @@ class User
         std::string					_password;
     
     public:
+        std::string					_password;
         int                         _fd;
         std::string                 _nickname;
         std::string                 _username;

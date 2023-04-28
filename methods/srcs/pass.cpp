@@ -37,5 +37,7 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 		this->_users.find(fd)->second._joinable = -1;
 		return ;
 	}
+	else if (!args[1].compare(this->_pass))
+		this->_users.find(fd)->second._joinable = 1;
 	std::cout << "pass bitti\n";
 }
