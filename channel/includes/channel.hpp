@@ -35,7 +35,6 @@ class Channel
 		void				erase_user(int fd);
         std::string         get_pass();
         void                set_pass(std::string pass);
-
         int                 get_limit();
         void                set_limit(int limit);
         int                 get_narrowcast();

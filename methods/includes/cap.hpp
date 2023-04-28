@@ -12,9 +12,8 @@ class Cap :public IMethod{
 
 	private:
 		std::map<int, User>&	_users;
-		Server&					_server;
 	public:
-		Cap(std::map<int, User>&	users, Server& server);
+		Cap(std::map<int, User>&	users);
 		~Cap();
 		void execute(std::vector<std::string> &arg, int fd);
 };

@@ -8,6 +8,9 @@
 
 class User
 {
+    private:
+        std::string					_password;
+    
     public:
         std::string					_password;
         int                         _fd;
@@ -19,7 +22,6 @@ class User
         int                         _is_regis;
 		std::string					_prefix;
 		
-        User(int fd, std::string ip);
         User(std::string nickname, std::string username, int fd);
         ~User();
 };

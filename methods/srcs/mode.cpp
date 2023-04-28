@@ -1,5 +1,6 @@
 #include "../includes/mode.hpp"
 
+
 Mode::Mode(Server &server) : _server(server) {}
 
 Mode::~Mode() {}
