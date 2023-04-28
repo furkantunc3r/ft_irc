@@ -1,8 +1,10 @@
 #include "../includes/privmsg.hpp"
 
-Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels) {}
+Privmsg::Privmsg(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), FilterBot(users, channels) {
+    // _bot = new FilterBot(_users, _channels);
+}
 
-Privmsg::~Privmsg() {}
+Privmsg::~Privmsg() { }
 
 void Privmsg::execute(std::vector<std::string> &args, int fd)
 {
@@ -22,6 +24,9 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
     }
 
     tts.append(trim(args[2], ':'));
+
+    if (!this->check_message(fd, tts))
+        return ;
 
     if (args[1][0] == '#')
     {
