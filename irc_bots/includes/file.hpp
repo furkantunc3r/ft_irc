@@ -38,13 +38,11 @@
 class File : public IMethod {
 	private:
 		int									send_fd;
-		int									get_fd;
 		struct sockaddr_in					send_addr;
-		struct sockaddr_in					get_addr;
 		std::map<int, User>&				users;
 		std::vector<pollfd>					fds;
 		std::map<int, std::string>			files;
-		int									new_fd;
+		// int									new_fd;
 		std::string							_file_name;
 		std::string							_file_data;
 		size_t								_file_size;

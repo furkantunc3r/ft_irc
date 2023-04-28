@@ -1,9 +1,7 @@
 #include "../includes/file.hpp"
 
 File::File(std::map<int, User> &_users) : users(_users)
-{
-	int optval = 1;
-}
+{}
 
 File::~File() {}
 
@@ -15,7 +13,6 @@ void File::do_connect()
 
 void File::init_file_data()
 {
-	size_t len = 0;
 	char *buffer = new char[SIZE];
 
 	memset(buffer, 0, SIZE);
@@ -58,6 +55,7 @@ User &File::find_user(std::string _nick)
 
 void File::execute(std::vector<std::string> &args, int fd)
 {
+	(void)fd;
 	if (args[0] == "SHA-256")
 	{	
 		std::string msg(this->users.find(-3)->second._prefix + "PRIVMSG " + *(args.end() - 1) + " :SHA-256 checksum for " + _file_name + " (remote): " + *(args.end() - 2) + "\r\n");

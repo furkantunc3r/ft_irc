@@ -2,6 +2,7 @@
 
 FilterBot::FilterBot(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels)
 {
+	(void)_channels;
 	this->_blacklist_words.push_back("politics");
 	this->_blacklist_words.push_back("propaganda");
 	this->_blacklist_words.push_back("vote");
