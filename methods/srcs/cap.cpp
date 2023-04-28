@@ -1,6 +1,7 @@
 #include "../includes/cap.hpp"
 
-Cap::Cap(std::map<int, User> &users, Server &server) : _users(users), _server(server)
+
+Cap::Cap(std::map<int, User> &users) : _users(users)
 {
 	User _leavingbot("NiGhT_BoT", "irc", -1);
 	User _filterbot("FilTer_BoT", "irc", -2);
@@ -37,7 +38,7 @@ void Cap::execute(std::vector<std::string> &arg, int fd)
 	// 	if (!strncmp(this->_users[i]._nickname.c_str(), arg[7].c_str(), this->_users[i]._nickname.size()))
 	// 		does_exist = true;
 	// }
-	
+	(void)arg;
 	User usr("", "", fd);
 	this->_users.insert(std::make_pair(fd, usr));
 }

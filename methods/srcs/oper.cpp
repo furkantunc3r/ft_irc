@@ -1,6 +1,6 @@
 #include "../includes/oper.hpp"
 
-Oper::Oper(std::map<int, User>& users, std::map<int, User>& opers, std::string pass) : _users(users), _pass(pass), _opers(opers) {}
+Oper::Oper(std::map<int, User>& users, std::map<int, User>& opers, std::string pass) : _users(users), _opers(opers), _pass(pass) {}
 
 Oper::~Oper() {}
 

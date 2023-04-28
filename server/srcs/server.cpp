@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 
-Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), listen_fd(-1), _pass(std::string(pass))
+Server::Server(char *arg, char *pass) : port(atoi(arg)), listen_fd(-1), new_fd(-1), fds(), _pass(std::string(pass))
 {
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 
@@ -9,7 +9,7 @@ Server::Server(char *arg, char *pass) : port(atoi(arg)), fds(), new_fd(-1), list
 	this->addr.sin_port = htons(this->port);
 
 	this->method["JOIN"] = new Join(this->users, this->channels);
-	this->method["CAP"] = new Cap(this->users, *this);
+	this->method["CAP"] = new Cap(this->users);
 	this->method["QUIT"] = new Quit(this->users, this->fds, this->channels);
 	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users, this->_pass);
@@ -122,7 +122,6 @@ void Server::do_accept()
 
 void Server::loop()
 {
-	int rc = 0;
 	this->create_socket();
 	this->do_listen(this->listen_fd, 1024);
 	while (1)

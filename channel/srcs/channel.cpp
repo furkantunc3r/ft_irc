@@ -8,7 +8,7 @@
 // 		this->_fds.push_back(fd);
 // }
 
-Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password(""), _limit(11)
+Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password("")
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
@@ -23,7 +23,7 @@ void Channel::add_user(int fd)
 void Channel::make_admin(int fd)
 {
 	std::map<int, User>::iterator it = this->_users.begin();
-
+  
 	for (; it != this->_users.end(); it++)
 		if (it->second._fd == fd)
 			break ;
