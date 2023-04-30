@@ -15,7 +15,7 @@ void Nick::execute(std::vector<std::string> &args, int fd)
 	it = this->_users.find(fd); 
     if (it != this->_users.end() && it->second._joinable != -1)
     {
-        if (args.empty() || args[1].empty())
+        if (args.empty() || args.size() < 2)
         {
             it = this->_users.find(fd);
             msg.append(it->second._prefix + " 431 " + it->second._nickname + " :Please provide a Nickname\r\n");

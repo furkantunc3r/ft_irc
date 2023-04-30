@@ -14,10 +14,10 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
 
   if (it != this->_users.end() && this->_users.find(fd)->second._joinable != -1)
   {
-    if (args.size() < 4)
+    if (args.size() < 5)
     {
       it = this->_users.find(fd);
-      msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+      msg.append(it->second._prefix + " 461 " + it->second._nickname + "Insufficent parameters\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }

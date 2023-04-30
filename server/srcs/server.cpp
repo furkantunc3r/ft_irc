@@ -2,6 +2,13 @@
 
 Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), listen_fd(-1), new_fd(-1),  _pass(pass) 
 {
+	User _leavingbot("NiGhT_BoT", "irc", -1);
+	this->users.insert(std::make_pair(-1, _leavingbot));
+	User _filterbot("FilTer_BoT", "irc", -2);
+	this->users.insert(std::make_pair(-2, _filterbot));
+	User _file_transfer("file", "irc_file", -3);
+	this->users.insert(std::make_pair(-3, _file_transfer));
+
 	memset((char *)&this->addr, 0, sizeof(this->addr));
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_addr.s_addr = INADDR_ANY;
@@ -115,6 +122,18 @@ void Server::do_recv(pollfd _fds)
 	if (rc <= 0)
 	{
 		std::cout << "  Connection closed" << std::endl;
+		this->users.erase(_fds.fd);
+		std::vector<pollfd>::iterator it = this->fds.begin();
+		for (; it->fd != _fds.fd; it++){}
+		this->fds.erase(it);
+		close(_fds.fd);
+	}
+	if (this->users.find(_fds.fd)->second._joinable == -1 && !this->users.find(_fds.fd)->second._nickname.empty())
+	{
+		std::string msg;
+		msg.append(this->users.find(-1)->second._prefix + " 461 " + this->users.find(-1)->second._prefix + " Insufficent parameters\r\n");
+		send(_fds.fd, msg.c_str(), msg.size(), 0);
+		this->users.erase(_fds.fd);
 		std::vector<pollfd>::iterator it = this->fds.begin();
 		for (; it->fd != _fds.fd; it++){}
 		this->fds.erase(it);

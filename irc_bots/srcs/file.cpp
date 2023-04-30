@@ -16,7 +16,7 @@ void File::init_file_data()
 	char *buffer = new char[SIZE];
 
 	memset(buffer, 0, SIZE);
-	while (_file_data.size() < _file_size)
+	while (_file_data.size() < (size_t)atoi(_file_size.c_str()))
 	{
 		recv(send_fd, buffer, SIZE, 0);
 		_file_data.append(buffer);
@@ -27,7 +27,8 @@ void File::init_file_data()
 
 void	File::create_file()
 {
-	std::ofstream _file(_file_name, std::fstream::trunc);
+	std::ofstream _file;
+	_file.open(_file_name.c_str(), std::iostream::trunc);
 	if (!_file.is_open())
 		perror("File ");
 	_file << _file_data;
@@ -37,7 +38,7 @@ void	File::create_file()
 void	File::send_file(std::string target)
 {
 	//IPv4 adresi = a x (256^3) + b x (256^2) + c x (256) + d ıp sayısal formatı
-	std::string msg(this->users.find(-3)->second._prefix + "DCC SEND " + _file_name + " 2130706433 8080 " + std::to_string(_file_size) + "\r\n");
+	std::string msg(this->users.find(-3)->second._prefix + "DCC SEND " + _file_name + " 2130706433 8080 " + _file_size + "\r\n");
 	std::cout << msg << std::endl;
 	send(find_user(target)._fd, msg.c_str(), msg.size(), 0);
 }
@@ -69,7 +70,7 @@ void File::execute(std::vector<std::string> &args, int fd)
 	this->send_addr.sin_family = AF_INET;
 	this->send_addr.sin_addr.s_addr = INADDR_ANY;
 	this->send_addr.sin_port = htons(atoi(args[4].c_str()));
-	_file_size = atoi(args[5].c_str());
+	_file_size = args[5];
 	_file_name = "ft_" + args[2];
 	do_connect();
 	init_file_data();

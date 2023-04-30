@@ -10,16 +10,14 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	for (size_t i = 0; i < args.size(); i++)
 		std::cout << "---->ARG " << i << " " << args[i] << "<----\n";
 	
-	
-	std::map<int, User>::iterator it = this->_users.find(fd);
-	if (args[1].empty())
+	if (args.size() < 2)
 	{
 		std::string msg;
-		msg.append(it->second._prefix + " 461 " + it->second._nickname + " :Insufficent parameters\r\n");
+		msg.append(this->_users.find(-1)->second._prefix + " 461 " + this->_users.find(-1)->second._prefix + " :Insufficent parameters\r\n");
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}
-
+	std::map<int, User>::iterator it = this->_users.find(fd);
     if (this->_users.find(fd)->second._is_regis == 1)
 	{
 		std::string msg;

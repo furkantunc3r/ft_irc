@@ -11,6 +11,7 @@
 #include <netinet/tcp.h>
 #include <errno.h>
 #include <cstring>
+#include <string>
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
@@ -45,7 +46,7 @@ class File : public IMethod {
 		// int									new_fd;
 		std::string							_file_name;
 		std::string							_file_data;
-		size_t								_file_size;
+		std::string							_file_size;
 
 	public:
 		File(std::map<int, User> &_users);
