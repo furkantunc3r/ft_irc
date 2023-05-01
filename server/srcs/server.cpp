@@ -24,7 +24,6 @@ Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), lis
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
-	this->method["FILE"] = new File(this->users);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 
 	this->create_socket();
@@ -115,7 +114,7 @@ void Server::do_recv(pollfd _fds)
 	char *buffer = new char[4096];
 	memset(buffer, 0, 4096);
 	rc = recv(_fds.fd, buffer, 4096, 0);
-	std::cout << buffer << std::endl;
+	std::cout << "buffer ->"<<buffer<<"<-" << std::endl;
 	std::vector<std::string> temp = parse(buffer, "\r\n");
 	for (size_t i = 0; i < temp.size(); i++)
 		this->execute(temp[i], _fds.fd);

@@ -26,13 +26,15 @@ void Quit::execute(std::vector<std::string> &arg, int fd)
 	std::map<int, User>::iterator _user_it = this->_users.find(fd);
     if (_user_it != this->_users.end())
 	{
+		std::vector<std::string> a;
+		a.push_back("CLOSE");
 		for (size_t i = 0; i < _user_it->second._channels.size(); i++)
 		{
-			std::vector<std::string> a(2, _user_it->second._channels[i]);
+			a[1] = _user_it->second._channels[i];
 			part.execute(a, fd);
 		}
 		this->_users.erase(_user_it);
-    	this->_fds.erase(fd_it);
 	}
+	this->_fds.erase(fd_it);
     close(fd);
 }

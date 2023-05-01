@@ -21,7 +21,7 @@ void Privmsg::execute(std::vector<std::string> &args, int fd)
 			temp.push_back(args.back());
 		temp.push_back(args[1]);
 		_file.execute(temp, fd);
-		return;
+		// return;
 	}
     if (args.size() < 2 || args[0].empty() || args[1].empty())
     {
