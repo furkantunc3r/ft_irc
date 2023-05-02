@@ -14,7 +14,6 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	{
 		std::string msg;
 		msg.append(this->_users.find(-1)->second._prefix + " 461 " + this->_users.find(-1)->second._prefix + ":Insufficent parameters\r\n");
-		std::cout << "******************* >" << msg << std::endl;
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}

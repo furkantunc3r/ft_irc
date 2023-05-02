@@ -24,6 +24,7 @@ Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), lis
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
+	this->method["MODE"] = new Mode(*this);
 	// this->method["OPER"] = new Oper(this->users, this->_opers, this->_oper_pass);
 
 	this->create_socket();
