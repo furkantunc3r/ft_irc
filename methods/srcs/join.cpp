@@ -24,7 +24,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 		this->_channels.insert(std::make_pair(arg[1], cha));
 	}
 
-	if (this->_channels.find(arg[1])->second.get_limit() < this->_channels.find(arg[1])->second.get_fds().size() + 1)
+	if (this->_channels.find(arg[1])->second.get_limit() < (int)this->_channels.find(arg[1])->second.get_fds().size() + 1)
 	{
 		std::string msg;
 		msg.append(this->_users.find(fd)->second._prefix + "471 " + this->_channels.find(arg[1])->second.get_name() + " :Channel is already full\r\n");
@@ -55,6 +55,7 @@ void Join::execute(std::vector<std::string> &arg, int fd)
 			}
 			std::string a(user_it->second._prefix + "JOIN ");
 			a.append(arg[1] + "\r\n");
+			std::cout << a << std::endl;
 			send(fd, a.c_str(), a.length(), 0);
 		}
 	}

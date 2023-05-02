@@ -6,6 +6,7 @@
 #include "unistd.h"
 #include <sys/poll.h>
 #include <map>
+#include <stdio.h>
 
 std::vector<std::string> parse(std::string str, std::string delimeter);
 

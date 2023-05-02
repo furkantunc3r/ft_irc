@@ -2,17 +2,14 @@
 
 
 Cap::Cap(std::map<int, User> &users) : _users(users)
-{
-	User _leavingbot("NiGhT_BoT", "irc", -1);
-	this->_users.insert(std::make_pair(-1, _leavingbot));
-}
+{}
 
 Cap::~Cap() {}
 
 void Cap::execute(std::vector<std::string> &arg, int fd)
 {
 	std::cout << ">CAP TEST<\n";
-	
+	(void)arg;
 	// bool does_exist = false;
 
 	// if (arg[7] != this->_server.get_pass())

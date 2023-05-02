@@ -4,11 +4,12 @@ std::vector<std::string> parse(std::string str, std::string delimeter)
 {
 	std::vector<std::string>	ret;
 	std::string					buffer;
-	ssize_t index;
+	
 	for (size_t i = 0; i < str.size(); i++)
 	{
 		buffer = str.substr(i, str.find_first_of(delimeter, i) - i);
-		(buffer.size() == 1 && buffer.find_first_of(" \r\n\t") != buffer.npos) ? (!buffer.erase(buffer.find_first_of("\r\n\t ")).empty()) : (i = i);
+		if (buffer.size() == 1 && buffer.find_first_of(" \r\n\t") != buffer.npos)
+			(buffer.erase(buffer.find_first_of("\r\n\t ")));
 		// (buffer.size() > 1 && buffer.find_first_of(delimeter) != buffer.npos) ? (!buffer.erase(buffer.find_first_of(delimeter)).empty()) : (i = i);
 		if (!buffer.empty())
 		{
@@ -16,7 +17,6 @@ std::vector<std::string> parse(std::string str, std::string delimeter)
 			i += buffer.size();
 		}
 	}
-	
 	return ret;
 }
 
@@ -50,3 +50,9 @@ void error(std::string msg, int fd)
 	close(fd);
 	exit(EXIT_FAILURE);
 }
+
+// void error(std::string msg, int fd)
+// {
+// 	perror(msg.c_str());
+// 	close(fd);
+// }
