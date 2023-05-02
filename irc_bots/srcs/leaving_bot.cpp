@@ -1,7 +1,7 @@
 #include "../includes/leaving_bot.hpp"
 #include <vector>
 
-LeavingBot::LeavingBot(std::map<int, User> &users, std::map<std::string, Channel> &channels) : _users(users), _channels(channels), _message(_users, _channels) {}
+LeavingBot::LeavingBot(std::map<int, User> &users, std::map<std::string, Channel> &channels, std::vector<pollfd> 	&_fds) : _users(users), _channels(channels), _message(_users, _channels, _fds) {}
 
 LeavingBot::~LeavingBot(){}
 

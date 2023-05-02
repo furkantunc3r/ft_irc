@@ -1,8 +1,8 @@
 #include "../includes/quit.hpp"
 
 
-Quit::Quit(std::map<int, User> &users, std::vector<pollfd> &fds, std::map<std::string, Channel> &channels) :  LeavingBot(users, channels), _fds(fds), _users(users), _channels(channels){
-	_message = new Privmsg(_users, _channels);
+Quit::Quit(std::map<int, User> &users, std::vector<pollfd> &fds, std::map<std::string, Channel> &channels) :  LeavingBot(users, channels, fds), _fds(fds), _users(users), _channels(channels){
+	_message = new Privmsg(_users, _channels, fds);
 }
 
 Quit::~Quit() {
