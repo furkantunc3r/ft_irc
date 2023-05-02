@@ -20,7 +20,7 @@ Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), lis
 	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
-	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
+	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels, this->fds);
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);
@@ -128,17 +128,17 @@ void Server::do_recv(pollfd _fds)
 		this->fds.erase(it);
 		close(_fds.fd);
 	}
-	if (this->users.find(_fds.fd)->second._joinable == -1 && !this->users.find(_fds.fd)->second._nickname.empty())
-	{
-		std::string msg;
-		msg.append(this->users.find(-1)->second._prefix + " 461 " + this->users.find(-1)->second._prefix + " Insufficent parameters\r\n");
-		send(_fds.fd, msg.c_str(), msg.size(), 0);
-		this->users.erase(_fds.fd);
-		std::vector<pollfd>::iterator it = this->fds.begin();
-		for (; it->fd != _fds.fd; it++){}
-		this->fds.erase(it);
-		close(_fds.fd);
-	}
+	// if (this->users.find(_fds.fd)->second._joinable == -1 )
+	// {
+	// 	std::string msg;
+	// 	msg.append(this->users.find(-1)->second._prefix + " 461 " + this->users.find(-1)->second._prefix + " Insufficent parameters\r\n");
+	// 	send(_fds.fd, msg.c_str(), msg.size(), 0);
+	// 	this->users.erase(_fds.fd);
+	// 	std::vector<pollfd>::iterator it = this->fds.begin();
+	// 	for (; it->fd != _fds.fd; it++){}
+	// 	this->fds.erase(it);
+	// 	close(_fds.fd);
+	// }
 	delete[] buffer;
 }
 

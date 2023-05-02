@@ -13,7 +13,7 @@ class Privmsg : public IMethod, FilterBot
 		File								_file;
         // FilterBot                           *_bot;
     public:
-        Privmsg(std::map<int, User>& users, std::map<std::string, Channel>& channels);
+        Privmsg(std::map<int, User>& users, std::map<std::string, Channel>& channels, std::vector<pollfd> &_fds);
         ~Privmsg();
         void execute(std::vector<std::string> &args, int fd);
 };
