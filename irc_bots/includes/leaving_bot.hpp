@@ -16,7 +16,7 @@ class LeavingBot{
 	public:
 		Privmsg _message;
 		
-		LeavingBot(std::map<int, User> &_users, std::map<std::string, Channel> &_channels);
+		LeavingBot(std::map<int, User> &_users, std::map<std::string, Channel> &_channels, std::vector<pollfd>	&_fds);
 		~LeavingBot();
 		
 		void send_message(int fd, std::string reason);

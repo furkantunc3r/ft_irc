@@ -20,7 +20,7 @@ Server::Server(std::string arg, std::string pass) : port(atoi(arg.c_str())), lis
 	this->method["NICK"] = new Nick(this->users);
 	this->method["PASS"] = new Pass(this->users, this->_pass);
 	this->method["USER"] = new Usercmd(this->users);
-	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels);
+	this->method["PRIVMSG"] = new Privmsg(this->users, this->channels, this->fds);
 	this->method["KICK"] = new Kick(*this);
 	this->method["PING"] = new Ping(*this);
 	this->method["PART"] = new Part(this->channels);

@@ -39,16 +39,18 @@
 class File : public IMethod {
 	private:
 		int									send_fd;
+		int									get_fd;
+		struct sockaddr_in					get_addr;
 		struct sockaddr_in					send_addr;
 		std::map<int, User>&				users;
-		std::vector<pollfd>					fds;
+		std::vector<pollfd>					&fds;
 		std::map<int, std::string>			files;
 		std::string							_file_name;
 		std::string							_file_data;
 		std::string							_file_size;
 
 	public:
-		File(std::map<int, User> &_users);
+		File(std::map<int, User> &_users, std::vector<pollfd> &_fds);
 		~File();
 
 		void	do_connect();
