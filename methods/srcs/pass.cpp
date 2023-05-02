@@ -13,7 +13,8 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	if (args.size() < 2)
 	{
 		std::string msg;
-		msg.append(this->_users.find(-1)->second._prefix + " 461 " + this->_users.find(-1)->second._prefix + " :Insufficent parameters\r\n");
+		msg.append(this->_users.find(-1)->second._prefix + " 461 " + this->_users.find(-1)->second._prefix + ":Insufficent parameters\r\n");
+		std::cout << "******************* >" << msg << std::endl;
 		send(fd, msg.c_str(), msg.size(), 0);
 		return ;
 	}
@@ -37,5 +38,4 @@ void Pass::execute(std::vector<std::string> &args, int fd)
 	}
 	else if (!args[1].compare(this->_pass))
 		this->_users.find(fd)->second._joinable = 1;
-	std::cout << "pass bitti\n";
 }
