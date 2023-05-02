@@ -45,7 +45,6 @@ class File : public IMethod {
 		std::map<int, User>&				users;
 		std::vector<pollfd>					&fds;
 		std::map<int, std::string>			files;
-		int									new_fd;
 		std::string							_file_name;
 		std::string							_file_data;
 		std::string							_file_size;

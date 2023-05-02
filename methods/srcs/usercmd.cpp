@@ -12,19 +12,26 @@ void Usercmd::execute(std::vector<std::string> &args, int fd)
   std::map<int, User>::iterator it = this->_users.find(fd);
   std::string msg;
 
+  if (this->_users.find(fd)->second._joinable == -1)
+  {
+    msg.append(it->second._prefix + " 461 " + it->second._nickname + " : Password required\r\n");
+    send(fd, msg.c_str(), msg.size(), 0);
+    this->_users.erase(fd);
+  }
+
   if (it != this->_users.end() && this->_users.find(fd)->second._joinable != -1)
   {
     if (args.size() < 5)
     {
       it = this->_users.find(fd);
-      msg.append(it->second._prefix + " 461 " + it->second._nickname + "Insufficent parameters\r\n");
+      msg.append(it->second._prefix + " 461 " + it->second._nickname + " : Insufficent parametersasd\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }
 
     if (it->second._is_regis == 1)
     {
-      msg.append(it->second._prefix + " 462 " + it->second._nickname + " :You are already registered2\r\n");
+      msg.append(it->second._prefix + " 462 " + it->second._nickname + " : You are already registered2\r\n");
       send(fd, msg.c_str(), msg.size(), 0);
       return;
     }

@@ -8,7 +8,7 @@
 // 		this->_fds.push_back(fd);
 // }
 
-Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password("")
+Channel::Channel(int fd, std::string name, std::map<int, User>& users) : _name(name), _users(users), _password(""), _limit(10)
 {
 	if (std::find(_fds.begin(), _fds.end(), fd) == _fds.end())
 		this->_fds.push_back(fd);
